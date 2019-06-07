@@ -144,5 +144,3 @@ def prepararPalabra(palabra, tipo):
 			sg.Popup(reporte, title = 'reporte')
 
 	return reporte, definicion
-
-print(prepararPalabra('carrera', 'sustantivo'))

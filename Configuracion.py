@@ -1,6 +1,7 @@
 # usar elemento Spin para seleccionar la cantidad de sustantivos, adjetivos o verbos que se van a poner en la sopa de letras
 
 import PySimpleGUI as sg
+import buscador
 
 #Constantes
 palabras = ['casa', 'auto', 'grande', 'rapido', 'juega', 'corre']
@@ -121,7 +122,7 @@ column3 = [
 
 columnaTipografia = [
 				[sg.InputCombo(values = tipografias, size=(20, 1)), sg.B('Cargar', key = 'cargarTipo')]
-			  ] 
+			  ]
 
 
 columnaMayus = [
@@ -141,13 +142,13 @@ columnaHorientacion = [
 layoutTipografia = [
 		 				[sg.T('Tipografia, horientación y mayus', font = ('Arial', 20))],
 		 				[sg.Column(columnaTipografia, key = 'columnaTipografia'), sg.Column(columnaMayus, key = 'columnaMayus'), sg.Column(columnaHorientacion, key = 'columnaHorientacion')]
-				   ]	
+				   ]
 
 layoutPrincipal = [
 		 			[sg.Menu(menu_def)],
 		 			[sg.T('Configuración', font = ('Arial', 20))],
 		 			[sg.Column(column1, key = 'columnaSustantivos'), sg.Column(column2, key = 'columnaAdjetivos'), sg.Column(column3, key = 'columnaVerbos')]
-				]	
+				]
 
 
 
@@ -195,7 +196,7 @@ while True:
 			descripcionVerbos[palabra] = descripcion
 			window.FindElement('listboxVerbos').Update(values = verbos)
 			window.FindElement('spinVerbos').Update(values = list(map(lambda x: x + 1, (range(len(verbos))))))
-		
+
 	#botones de borrado
 
 	elif (button == 'eliminarSustantivo'):
@@ -242,7 +243,7 @@ while True:
 
 	#Selectores de color
 	elif (button == 'cargarColorSustantivos'):
-		colorElegido = values['colorSustantivos'] 
+		colorElegido = values['colorSustantivos']
 		if(colorElegido != '' and colorElegido != 'None'):
 			#saco algunos colores que son muy claros y no se llega a leer bien
 			if(colorElegido == '#ffffff' or colorElegido == '#c0c0c0' or colorElegido == '#ffff80' or colorElegido == '#ffff00' or colorElegido == '#80ffff' or colorElegido == '#00ffff'):
@@ -254,7 +255,7 @@ while True:
 			sg.Popup('Tiene que elegir un color antes.')
 
 	elif (button == 'cargarColorAdjetivos'):
-		colorElegido = values['colorAdjetivos'] 
+		colorElegido = values['colorAdjetivos']
 		if(colorElegido != '' and colorElegido != 'None'):
 			#saco algunos colores que son muy claros y no se llega a leer bien
 			if(colorElegido == '#ffffff' or colorElegido == '#c0c0c0' or colorElegido == '#ffff80' or colorElegido == '#ffff00' or colorElegido == '#80ffff' or colorElegido == '#00ffff'):
@@ -267,7 +268,7 @@ while True:
 
 
 	elif (button == 'cargarColorVerbos'):
-		colorElegido = values['colorVerbos'] 
+		colorElegido = values['colorVerbos']
 		if(colorElegido != '' and colorElegido != 'None'):
 			#saco algunos colores que son muy claros y no se llega a leer bien
 			if(colorElegido == '#ffffff' or colorElegido == '#c0c0c0' or colorElegido == '#ffff80' or colorElegido == '#ffff00' or colorElegido == '#80ffff' or colorElegido == '#00ffff'):
