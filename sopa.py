@@ -1,13 +1,13 @@
 
-def SopaDeLetras():
+def SopaDeLetras(sustantivos=['']):
     import PySimpleGUI as sg
     import random
     import string
 
     coordenadas = []
     aux = -1
-    sizeSopa = 50*10 #EL 10 ES EL RESULTADO DE LO GRANDE QUE VA A SER LA SOPA DE LETRAS
-    size = int((50*10)/50) #EL 10 ES EL RESULTADO DE LO GRANDE QUE VA A SER LA SOPA DE LETRAS
+    sizeSopa = 50*13 #EL 10 ES EL RESULTADO DE LO GRANDE QUE VA A SER LA SOPA DE LETRAS
+    size = int((50*13)/50) #EL 10 ES EL RESULTADO DE LO GRANDE QUE VA A SER LA SOPA DE LETRAS
     alto_fin = sizeSopa+49
     alto_inicio = sizeSopa
     for x in range(size): #VALOR DE COLUMNAS
@@ -26,8 +26,8 @@ def SopaDeLetras():
 
     layout = [
     			[sg.Graph(canvas_size=(sizeSopa, sizeSopa), graph_bottom_left=(0,0), graph_top_right=(sizeSopa, sizeSopa), background_color='white',
-                key='graph',enable_events=True,change_submits=False,drag_submits=True)],
-                [sg.Submit('Salir')]
+                key='graph',enable_events=True,change_submits=False,drag_submits=False)],
+                [sg.Submit('Comprobar'),sg.Submit('Salir')]
              ]
 
     window = sg.Window('Sopa de letras', layout).Finalize()
@@ -65,4 +65,5 @@ def SopaDeLetras():
                     graph.DrawText('{}'.format(letras[str(x1)+str(y1)+str(x2)+str(y2)]),(x2+25,y2+25))
             except IndexError:
                 pass
+
 SopaDeLetras()
