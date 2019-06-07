@@ -109,7 +109,7 @@ def segunPattern(palabra, tipo):
 
 #----------------------------------------------------------------------------------------------------------------
 
-def prepararPalabra(palabra, tipo):
+def consultarPalabra(palabra, tipo):
 
 	reporte = ''
 	definicion = ''
@@ -122,10 +122,8 @@ def prepararPalabra(palabra, tipo):
 	if(resultadoWik[0]):
 		if(resultadoPat):
 			reporte = 'Tanto el Wikcionario como Pattern aprobaron la palabra.'
-			sg.Popup(reporte, title = 'reporte')
 		else:
 			reporte = 'El Wikcionario aprobó la palabra, pero Pattern no.'
-			sg.Popup(reporte, title = 'reporte')
 
 		#Si Wiktionary aprueba la palabra uso la definicion de esa pagina
 		definicion = resultadoWik[1]
@@ -133,14 +131,8 @@ def prepararPalabra(palabra, tipo):
 		if (resultadoPat):
 			#Si solo Pattern aprueba la palabra se pide una descripcion
 			reporte = 'El Wikcionario no aprobó la palabra, pero Pattern si.'
-			sg.Popup(reporte, title = 'reporte')
-			definicion = sg.PopupGetText('Por favor ingrese una definicion de la palabra: ' + palabra, title = 'Ingreso de descripcion')
-			while(definicion == None):
-				definicion = sg.PopupGetText('No se escribió una definición. Por favor ingrese una definicion de la palabra: ' + palabra, title = 'Ingreso de descripcion')
-			definicion = definicion + ' (descripcion brindada por el profesor)'
 		else:
 			#En caso de que la palabra no se apruebe por ninguno de los dos sistemas la descripcion queda en blanco
 			reporte = 'Ni el Wikcionario ni Pattern aprobaron la palabra.'
-			sg.Popup(reporte, title = 'reporte')
 
 	return reporte, definicion

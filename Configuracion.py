@@ -4,16 +4,15 @@ import PySimpleGUI as sg
 import buscador
 
 #Constantes
-palabras = ['casa', 'auto', 'grande', 'rapido', 'juega', 'corre']
 
 sustantivos = ['casa', 'auto']
 adjetivos = ['grande', 'rapido']
 verbos = ['juega', 'corre']
 tipografias = ['Helvética', 'Futura', 'Avant Garde', 'Garamond', 'Bodoni', 'Franklin Gothic', 'Myriad', 'Bickham Script', 'Avenir', 'Trajan']
 
-descripcionSustantivos = {}
-descripcionAdjetivos = {}
-descripcionVerbos = {}
+definicionSustantivos = {}
+definicionAdjetivos = {}
+definicionVerbos = {}
 
 
 
@@ -23,62 +22,12 @@ menu_def = [['Abrir', ['Juego', 'Configuración']], ['Seleccionar', ['Tipografia
 
 #funciones
 
-def abrirVentanaSustantivo(palabra, descripcion, reporte):
-	#docstring
-	palabra = ''
-	descripcion = ''
-	reporte = ''
-	ventanaSustantivo = sg.Window('Seleccionar palabra').Layout(pidePalabra)
-
-	while True:
-		button, values = ventanaSustantivo.Read()
-		if (button == 'ok'):
-			#Aqui compruebo que la palabra sea la deseada (sustantivo, adjetivo o verbo) y devuelvo el reporte y descripcion,
-			#en caso de que la palabra no sea válida devuelvo un string vacio
-			palabra = values['palabraIngresada']
-			break
-		else:
-			break
-	ventanaSustantivo.Close()
-	return (palabra, descripcion, reporte)
-
-def abrirVentanaAdjetivo(palabra, descripcion, reporte):
-	#docstring
-	palabra = ''
-	descripcion = ''
-	reporte = ''
-	ventanaAdjetivo = sg.Window('Seleccionar palabra').Layout(pidePalabra)
-
-	while True:
-		button, values = ventanaAdjetivo.Read()
-		if (button == 'ok'):
-			#Aqui compruebo que la palabra sea la deseada (sustantivo, adjetivo o verbo) y devuelvo el reporte y descripcion,
-			#en caso de que la palabra no sea válida devuelvo un string vacio
-			palabra = values['palabraIngresada']
-			break
-		else:
-			break
-	ventanaAdjetivo.Close()
-	return (palabra, descripcion, reporte)
-
-def abrirVentanaVerbo(palabra, descripcion, reporte):
-	#docstring
-	palabra = ''
-	descripcion = ''
-	reporte = ''
-	ventanaVerbo = sg.Window('Seleccionar palabra').Layout(pidePalabra)
-
-	while True:
-		button, values = ventanaVerbo.Read()
-		if (button == 'ok'):
-			#Aqui compruebo que la palabra sea la deseada (sustantivo, adjetivo o verbo) y devuelvo el reporte y descripcion,
-			#en caso de que la palabra no sea válida devuelvo un string vacio
-			palabra = values['palabraIngresada']
-			break
-		else:
-			break
-	ventanaVerbo.Close()
-	return (palabra, descripcion, reporte)
+def pedirDefinicion():
+	definicion = sg.PopupGetText('Por favor ingrese una definicion de la palabra: ' + palabra, title = 'Ingreso de descripcion')
+	while(definicion == None):
+		definicion = sg.PopupGetText('No se escribió una definición. Por favor ingrese una definicion de la palabra: ' + palabra, title = 'Ingreso de descripcion')
+	definicion = definicion + ' (descripcion brindada por el profesor)'
+	return definicion
 
 #layouts
 
@@ -158,53 +107,72 @@ window = sg.Window('Programa').Layout(layoutPrincipal)
 while True:
 	button, values = window.Read()
 
-	#inicializo las variables para poder llamar a las funciones (no estoy seguro que las funciones devuelvan el dato, creo que se pasa por valor)
-	palabra = ''
-	descripcion = ''
-	reporte = ''
 	#botones de agregado
 	if (button == 'agregarSustantivo'):
-		palabra, descripcion, reporte = abrirVentanaSustantivo(palabra, descripcion, reporte) #abre una ventana que pide un sustantivo y si es correcto (comprobando con pattern y wiktionary) la devuelve
-		if (palabra != ''):
-			if (reporte != ''):
-				sg.Popup(reporte)
-			palabras.append(palabra)
-			sustantivos.append(palabra)
-			descripcionSustantivos[palabra] = descripcion
-			window.FindElement('listboxSustantivos').Update(values = sustantivos)
-			window.FindElement('spinSustantivos').Update(values = list(map(lambda x: x + 1, (range(len(sustantivos))))))
+
+		#Pop up para ingresar la palabra
+		palabra = sg.PopupGetText('Ingrese el sustantivo:', title = 'Ingreso de palabra', font = ('Arial', 12))
+
+		#compruebo que se haya ingresado una palabra
+		if(palabra != None):
+
+			#Busco la palabra en Wiktionary y Pattern e imprimo el reporte
+			reporte, definicion = buscador.consultarPalabra(palabra, 'Sustantivo')
+
+			sg.Popup(reporte, title = 'reporte')
+
+			if(reporte != 'Ni el Wikcionario ni Pattern aprobaron la palabra.'):
+
+				#Si existe la palabra pero solo en Pattern pido una definicion
+				if(reporte == 'El Wikcionario no aprobó la palabra, pero Pattern si.' or reporte == 'Ni el Wikcionario ni Pattern aprobaron la palabra.'):
+					definicion = pedirDefinicion()
+
+				#Cargo todos los datos
+				sustantivos.append(palabra)
+				definicionSustantivos[palabra] = definicion
+				window.FindElement('listboxSustantivos').Update(values = sustantivos)
+				window.FindElement('spinSustantivos').Update(values = list(map(lambda x: x + 1, (range(len(sustantivos))))))
 
 
 	elif (button == 'agregarAdjetivo'):
-		palabra, descripcion, reporte = abrirVentanaAdjetivo(palabra, descripcion, reporte)
-		if (palabra != ''):
-			if (reporte != ''):
-				sg.Popup(reporte)
-			palabras.append(palabra)
-			adjetivos.append(palabra)
-			descripcionAdjetivos[palabra] = descripcion
-			window.FindElement('listboxAdjetivos').Update(values = adjetivos)
-			window.FindElement('spinAdjetivos').Update(values = list(map(lambda x: x + 1, (range(len(adjetivos))))))
+		palabra = sg.PopupGetText('Ingrese el adjetivo:', title = 'Ingreso de palabra', font = ('Arial', 12))
+		if(palabra != None):
+			reporte, definicion = buscador.consultarPalabra(palabra, 'Adjetivo')
+
+			sg.Popup(reporte, title = 'reporte')
+
+			if(reporte != 'Ni el Wikcionario ni Pattern aprobaron la palabra.'):
+				if(reporte == 'El Wikcionario no aprobó la palabra, pero Pattern si.' or reporte == 'Ni el Wikcionario ni Pattern aprobaron la palabra.'):
+					definicion = pedirDefinicion()
+
+				adjetivos.append(palabra)
+				definicionAdjetivos[palabra] = definicion
+				window.FindElement('listboxAdjetivos').Update(values = adjetivos)
+				window.FindElement('spinAdjetivos').Update(values = list(map(lambda x: x + 1, (range(len(adjetivos))))))
 
 	elif (button == 'agregarVerbo'):
-		palabra, descripcion, reporte = abrirVentanaVerbo(palabra, descripcion, reporte)
-		if (palabra != ''):
-			if (reporte != ''):
-				sg.Popup(reporte)
-			palabras.append(palabra)
-			verbos.append(palabra)
-			descripcionVerbos[palabra] = descripcion
-			window.FindElement('listboxVerbos').Update(values = verbos)
-			window.FindElement('spinVerbos').Update(values = list(map(lambda x: x + 1, (range(len(verbos))))))
+		palabra = sg.PopupGetText('Ingrese el verbo:', title = 'Ingreso de palabra', font = ('Arial', 12))
+		if(palabra != None):
+			reporte, definicion = buscador.consultarPalabra(palabra, 'Verbo')
+
+			sg.Popup(reporte, title = 'reporte')
+
+			if(reporte != 'Ni el Wikcionario ni Pattern aprobaron la palabra.'):
+				if(reporte == 'El Wikcionario no aprobó la palabra, pero Pattern si.' or reporte == 'Ni el Wikcionario ni Pattern aprobaron la palabra.'):
+					definicion = pedirDefinicion()
+
+				verbos.append(palabra)
+				definicionVerbos[palabra] = definicion
+				window.FindElement('listboxVerbos').Update(values = verbos)
+				window.FindElement('spinVerbos').Update(values = list(map(lambda x: x + 1, (range(len(verbos))))))
 
 	#botones de borrado
 
 	elif (button == 'eliminarSustantivo'):
 		try:
 			palabra = values['listboxSustantivos'][0]
-			palabras.remove(palabra)
 			sustantivos.remove(palabra)
-			#del descripcionSustantivos[palabra] ;lo comento por ahora porque todavia no lo estoy cargando
+			#del definicionSustantivos[palabra] ;lo comento por ahora porque todavia no lo estoy cargando
 			window.FindElement('listboxSustantivos').Update(values = sustantivos)
 			if (len(sustantivos) == 0):
 				window.FindElement('spinSustantivos').Update(values = [0])
@@ -216,9 +184,8 @@ while True:
 	elif (button == 'eliminarAdjetivo'):
 		try:
 			palabra = values['listboxAdjetivos'][0]
-			palabras.remove(palabra)
 			adjetivos.remove(palabra)
-			#del descripcionAdjetivos[palabra] ;lo comento por ahora porque todavia no lo estoy cargando
+			#del definicionAdjetivos[palabra] ;lo comento por ahora porque todavia no lo estoy cargando
 			window.FindElement('listboxAdjetivos').Update(values = adjetivos)
 			if (len(adjetivos) == 0):
 				window.FindElement('spinAdjetivos').Update(values = [0])
@@ -230,9 +197,8 @@ while True:
 	elif (button == 'eliminarVerbo'):
 		try:
 			palabra = values['listboxVerbos'][0]
-			palabras.remove(palabra)
 			verbos.remove(palabra)
-			#del descripcionVerbos[palabra] ;lo comento por ahora porque todavia no lo estoy cargando
+			#del definicionVerbos[palabra] ;lo comento por ahora porque todavia no lo estoy cargando
 			window.FindElement('listboxVerbos').Update(values = verbos)
 			if (len(verbos) == 0):
 				window.FindElement('spinVerbos').Update(values = [0])
