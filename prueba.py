@@ -1,16 +1,3 @@
-"""
-engine para setear donde buscar
-1° setear lenguaje
-2° aplicar un search (argumento lo que quiero buscar), devuelve un articulo
-le puede pedir algo al articulo (article.sections por ejemplo devuelve una lista de objetos)
-en el titulo de la seccion tenemos informacion de si es adjetivo, sustantivo, o verbo
-
-articulo --> seccion ---> titulo
-
-dir(objeto) devuelve una lista de lo que podes pedir
-
-"""
-
 import PySimpleGUI as sg
 import string
 import pattern.es as pattes
@@ -56,8 +43,8 @@ def segunWiktionary(palabra, tipo):
 
 
 	if(article == None):
-		#Si no encuentra el articulo en Wiktionary devuelve encontrado como None
-		encontrado = None
+		#Si no encuentra el articulo en Wiktionary devuelve encontrado como False
+		encontrado = False
 	else:
 		#Si se encontró el artículo
 		#Recorre todas las secciones y pregunta si alguna es del tipoElegido, si la encuentra la guarda para luego sacar la definicion
@@ -92,20 +79,70 @@ def segunWiktionary(palabra, tipo):
 	return (encontrado, descripcion)
 
 #--------------------------------------------------------------------------------------------------------------
-def segunPattern(palabra):
+def segunPattern(palabra, tipo):
 
+	tipo = tipo.lower()
+	tipo = tipo.capitalize()
+
+	#Tipo de palabras segun Pattern
 	clasifSustantivos = ['NN', 'NNS', 'NNP', 'NNPS']
 	clasifAdjetivos = ['JJ', 'JJR', 'JJS']
 	clasifVerbos = ['MD', 'VB', 'VBZ', 'VBP', 'VBD', 'VBN', 'VBG']
 
+	#con el .parse obtengo una lista con propiedades de la palabra y me guardo el tipo (propiedades[1])
 	propiedades = pattes.parse(palabra)
-	print(propiedades)
 	propiedades = propiedades.split('/')
 	clasificacion = propiedades[1]
-	print(clasificacion)
+
+	#pregunto si coincide
 	if(clasificacion in clasifSustantivos):
-		return 'Sustantivo'
+		resultado = 'Sustantivo'
 	elif(clasificacion in clasifAdjetivos):
-		return 'Adjetivo'
+		resultado = 'Adjetivo'
 	elif(clasificacion in clasifVerbos):
-		return 'Verbo'
+		resultado = 'Verbo'
+
+	if (resultado == tipo):
+		return True
+	else:
+		return False
+
+#----------------------------------------------------------------------------------------------------------------
+
+def prepararPalabra(palabra, tipo):
+
+	reporte = ''
+	definicion = ''
+
+	#Busco la palabra en Wiktionary o en Pattern
+	resultadoWik = segunWiktionary(palabra, tipo)
+	resultadoPat = segunPattern(palabra, tipo)
+
+	#Segun los resultados que me arrojen las funciones genero el reporte
+	if(resultadoWik[0]):
+		if(resultadoPat):
+			reporte = 'Tanto el Wikcionario como Pattern aprobaron la palabra.'
+			sg.Popup(reporte, title = 'reporte')
+		else:
+			reporte = 'El Wikcionario aprobó la palabra, pero Pattern no.'
+			sg.Popup(reporte, title = 'reporte')
+
+		#Si Wiktionary aprueba la palabra uso la definicion de esa pagina
+		definicion = resultadoWik[1]
+	else:
+		if (resultadoPat):
+			#Si solo Pattern aprueba la palabra se pide una descripcion
+			reporte = 'El Wikcionario no aprobó la palabra, pero Pattern si.'
+			sg.Popup(reporte, title = 'reporte')
+			definicion = sg.PopupGetText('Por favor ingrese una definicion de la palabra: ' + palabra, title = 'Ingreso de descripcion')
+			while(definicion == None):
+				definicion = sg.PopupGetText('No se escribió una definición. Por favor ingrese una definicion de la palabra: ' + palabra, title = 'Ingreso de descripcion')
+			definicion = definicion + ' (descripcion brindada por el profesor)'
+		else:
+			#En caso de que la palabra no se apruebe por ninguno de los dos sistemas la descripcion queda en blanco
+			reporte = 'Ni el Wikcionario ni Pattern aprobaron la palabra.'
+			sg.Popup(reporte, title = 'reporte')
+
+	return reporte, definicion
+
+print(prepararPalabra('carrera', 'sustantivo'))
