@@ -13,6 +13,7 @@ dir(objeto) devuelve una lista de lo que podes pedir
 
 import PySimpleGUI as sg
 import string
+import pattern.es as pattes
 
 def segunWiktionary(palabra, tipo):
 	"""Funcion que busca en Wiktionary la palabra ingresada,
@@ -72,8 +73,6 @@ def segunWiktionary(palabra, tipo):
 			#divide las secciones por renglón
 			listaContenido = seccion.content.split('\n')
 
-			print(listaContenido) #borra
-
 			#Busca el elemento de la lista que contiene la definicion y se guarda la posicion en la variable pos
 			posActual = 0
 			pos = 0
@@ -92,8 +91,21 @@ def segunWiktionary(palabra, tipo):
 
 	return (encontrado, descripcion)
 
-x = segunWiktionary('carrera', 'sustantivo')
+#--------------------------------------------------------------------------------------------------------------
+def segunPattern(palabra):
 
-print(x)
+	clasifSustantivos = ['NN', 'NNS', 'NNP', 'NNPS']
+	clasifAdjetivos = ['JJ', 'JJR', 'JJS']
+	clasifVerbos = ['MD', 'VB', 'VBZ', 'VBP', 'VBD', 'VBN', 'VBG']
 
-sg.Popup(x[1])
+	propiedades = pattes.parse(palabra)
+	print(propiedades)
+	propiedades = propiedades.split('/')
+	clasificacion = propiedades[1]
+	print(clasificacion)
+	if(clasificacion in clasifSustantivos):
+		return 'Sustantivo'
+	elif(clasificacion in clasifAdjetivos):
+		return 'Adjetivo'
+	elif(clasificacion in clasifVerbos):
+		return 'Verbo'
