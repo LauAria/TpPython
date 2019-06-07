@@ -11,9 +11,22 @@ dir(objeto) devuelve una lista de lo que podes pedir
 
 """
 
-def segunPattern(palabra, tipo):
+import PySimpleGUI as sg
+import string
+
+def segunWiktionary(palabra, tipo):
+	"""Funcion que busca en Wiktionary la palabra ingresada,
+	devuelve (None, '') si no se encontró la palabra en Wiktionary
+	devuelve (False, '') si se encontró la palabra pero no coincide el tipo (Sustantivo, adjetivo o verbo)
+	devuelve (True, 'la definicion de la palabra') si se encontró la palabra y coincidió el tipo"""
+
 
 	import pattern.web as patweb
+
+	tipo = tipo.lower()
+	tipo = tipo.capitalize()
+	palabra = palabra.lower()
+	descripcion = ''
 
 	#Lista de titulos de secciones
 	tipoSustantivo = ['Sustantivo femenino', 'Sustantivo masculino', 'Sustantivo propio', 'Forma sustantiva']
@@ -41,30 +54,46 @@ def segunPattern(palabra, tipo):
 	   cached = True)
 
 
-
-	try:
-
-		titulos = []
-		for section in article.sections:
-		     titulos.append(section.title)
-
-		#Se recorre la lista de tipos y se pregunta si alguno coincide con los titulos
-
+	if(article == None):
+		#Si no encuentra el articulo en Wiktionary devuelve encontrado como None
+		encontrado = None
+	else:
+		#Si se encontró el artículo
+		#Recorre todas las secciones y pregunta si alguna es del tipoElegido, si la encuentra la guarda para luego sacar la definicion
 		encontrado = False
+		seccion = None
+		for section in article.sections:
+			if (encontrado == False and section.title in tipoElegido):
+				encontrado = True
+				seccion = section
 
-		print(tipoElegido) #borrar
-		print(titulos) #borrar
+		#Si la palabra es del tipo especificado
+		if (encontrado == True):
+			#divide las secciones por renglón
+			listaContenido = seccion.content.split('\n')
 
-		for x in tipoElegido:
-			if(not encontrado == True):
-				encontrado = (x in titulos)
+			print(listaContenido) #borra
 
-	except AttributeError:
+			#Busca el elemento de la lista que contiene la definicion y se guarda la posicion en la variable pos
+			posActual = 0
+			pos = 0
+			for x in listaContenido:
+				if (x != '') and (x[0] in string.digits and pos == 0):
+					pos = posActual
+				posActual += 1
 
-		#En caso de ser una palabra random devuelve None
-		encontrado = None;
+			listaContenido = listaContenido[pos:]
 
-	return encontrado
+			if (len (listaContenido) > 1):
+				descripcion = '\n'.join(listaContenido)
+			else:
+				descripcion = listaContenido[0]
 
 
-print(segunPattern('gradísimo', 'Adjetivo'))
+	return (encontrado, descripcion)
+
+x = segunWiktionary('carrera', 'sustantivo')
+
+print(x)
+
+sg.Popup(x[1])
