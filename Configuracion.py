@@ -210,8 +210,8 @@ column3 = [
         ]
 
 columnaTipografia = [
-                [sg.InputCombo(values = tipografias, default_value='Helvetica',size=(20, 1), readonly=True, key = 'InputComboTipografias'), sg.B('Cargar', key = 'cargarTipo')]
-              ]
+                        [sg.InputCombo(values = tipografias, default_value='Helvetica',size=(20, 1), readonly=True, key = 'InputComboTipografias'), sg.B('Cargar', key = 'cargarTipo')]
+                    ]
 
 
 columnaMayus = [
@@ -224,12 +224,12 @@ columnaOrientacion = [
                         [sg.B('Horizontal', key = 'Bhorizontal')],
                         [sg.B('Vertical', key = 'Bvertical')],
                         [sg.T('Orientación actual: Horizontal', key = 'orientacionActual')]
-                       ]
+                     ]
 
 
 layoutTipografia = [
-                         [sg.T('Tipografia, orientación y mayus', font = ('Arial', 20))],
-                         [sg.Column(columnaTipografia, key = 'columnaTipografia'), sg.Column(columnaMayus, key = 'columnaMayus'),
+                        [sg.T('Tipografia, orientación y mayus', font = ('Arial', 20))],
+                        [sg.Column(columnaTipografia, key = 'columnaTipografia'), sg.Column(columnaMayus, key = 'columnaMayus'),
                         sg.Column(columnaOrientacion, key = 'columnaOrientacion')],
                         [sg.T('TEXTO DE MUESTRA', font = ('Arial', 18), key = 'textoPrueba')],
                         [sg.B('Listo', font = ('Arial', 13))]
@@ -239,7 +239,7 @@ layoutPrincipal = [
                      [sg.Menu(menu_def)],
                      [sg.T('Configuración', font = ('Arial', 20))],
                      [sg.Column(column1, key = 'columnaSustantivos'), sg.Column(column2, key = 'columnaAdjetivos'), sg.Column(column3, key = 'columnaVerbos')]
-                ]
+                  ]
 
 
 
@@ -280,6 +280,7 @@ while True:
     elif (button == 'cargarColorVerbos'):
         cargarColor('verbo')
 
+    #cargar cantidad elegida
     elif (button == 'cantSustantivos'):
         datos['cantSustantivos'] = values['spinSustantivos']
         window.FindElement('cargadoSustantivos').Update(visible = True)
@@ -292,6 +293,7 @@ while True:
         datos['cantVerbos'] = values['spinVerbos']
         window.FindElement('cargadoVerbos').Update(visible = True)
 
+    #abrir ventaja de tipografia, mayus y minus y vertical o horizontal
     elif (button == 'Tipografia'):
         abrirVentanaTipografia(window)
 

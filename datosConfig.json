@@ -1,20 +1,40 @@
 {
-    "orientacion": "Horizontal",
-    "tipografia": "Arial",
-    "mayus": "Mayusculas",
-    "cantSustantivos": 0,
-    "cantAdjetivos": 0,
-    "cantVerbos": 0,
-    "colorSustantivos": "#00ff00",
-    "colorAdjetivos": "#0000ff",
-    "colorVerbos": "#ff0000",
-    "sustantivos": [],
+    "orientacion": "Vertical",
+    "tipografia": "Courier",
+    "mayus": "Minusculas",
+    "cantSustantivos": "2",
+    "cantAdjetivos": "1",
+    "cantVerbos": "1",
+    "colorSustantivos": "#ff8000",
+    "colorAdjetivos": "#00ff00",
+    "colorVerbos": "#ff00ff",
+    "sustantivos": [
+        "colectivo",
+        "antro"
+    ],
     "adjetivos": [],
-    "verbos": [],
-    "definicionSustantivos": {},
-    "definicionAdjetivos": {},
-    "definicionVerbos": {},
-    "sustantivosElegidos": [],
-    "adjetivosElegidos": [],
-    "verbosElegidos": []
+    "verbos": [
+        "jugar",
+        "correr"
+    ],
+    "definicionSustantivos": {
+        "asdaddasd": "palabra random (descripcion brindada por el profesor)",
+        "avion": "1 Aeron\u00e1utica y Transporte.Avi\u00f3n."
+    },
+    "definicionAdjetivos": {
+        "lindo": "1Que es agradable a la vista o al \u00e1nimo, con un toque de ternura. [2]\n* Sin\u00f3nimos: agraciado, bello, bonito, hermoso, primoroso.\n\n2Que provoca un sentimiento de ternura por su gracia.\n* Relacionados: exquisito, primoroso.\n* Derivado: lindeza, lindura."
+    },
+    "definicionVerbos": {
+        "saltar": "1Impulsarse o lanzarse al aire.2Lanzarse al vacio.3Acci\u00f3n de un objeto que se separa r\u00e1pidamente de un lugar y se detiene en otro.4Surgir de repente."
+    },
+    "sustantivosElegidos": [
+        "asdaddasd",
+        "avion"
+    ],
+    "adjetivosElegidos": [
+        "lindo"
+    ],
+    "verbosElegidos": [
+        "saltar"
+    ]
 }
