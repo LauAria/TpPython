@@ -1,5 +1,5 @@
 
-def SopaDeLetras(sustantivos=['NOSOTROS','ELLOS'],verbos=['CORRER','LLOVER'],adjetivos=['GORDO'],horizontal=True,Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A'):
+def SopaDeLetras(sustantivos=['PROFESOR','CASA'],verbos=['CORRER','LLOVER'],adjetivos=['GORDO'],horizontal=True,Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A'):
     import PySimpleGUI as sg
     import random
     import string
@@ -25,7 +25,7 @@ def SopaDeLetras(sustantivos=['NOSOTROS','ELLOS'],verbos=['CORRER','LLOVER'],adj
     coordenadas = []
     diccionarioCoordenadas = {} #DICCIONARIO CON LAS CLAVES COMO SI FUERAN LAS POSICIONES EN LA MATRIZ
     aux = -1
-    tamañoDeSopa = InfoMax[0]+(int(InfoMax[1]/2)) #ES EL RESULTADO DE LO GRANDE QUE VA A SER LA SOPA DE LETRAS
+    tamañoDeSopa = InfoMax[0]+(int(InfoMax[1]/2))+1 #ES EL RESULTADO DE LO GRANDE QUE VA A SER LA SOPA DE LETRAS
     sizeSopa = 50*tamañoDeSopa
     size = int((50*tamañoDeSopa)/50)
     alto_fin = sizeSopa+49
@@ -73,35 +73,34 @@ def SopaDeLetras(sustantivos=['NOSOTROS','ELLOS'],verbos=['CORRER','LLOVER'],adj
         for i in Palabras:
             ancho = random.choice(range(tamañoDeSopa-len(i)))
             alto = random.choice(range(tamañoDeSopa))
-            ok = False
-            while (ok == False):
-                if (alto in repetidasAlto.keys()):
-                    cantidad = len(repetidasAlto[alto])
-                    for j in range(1,cantidad,2):
-                        espacioDerecha = tamañoDeSopa-(repetidasAlto[alto][j]+repetidasAlto[alto][j-1])
-                        if (repetidasAlto[alto][j] > len(i)):
-                            ok = True
-                            rangoNuevo = repetidasAlto[alto][j]-1
-                        else:
-                            ok = False
-                        if (espacioDerecha > len(i)):
-                            ok = True
-                            rangoNuevo = espacioDerecha-1
-                        else:
-                            ok = False
-                    if (ok):
-                        ancho = random.choice(range(tamañoDeSopa)-len(i))
-                        repetidasAlto[alto].append(len(i))
-                        repetidasAlto[alto].append(ancho)
-                    else:
+            if (alto in repetidasAlto.keys()):
+                print('repetida')
+                aux = alto
+                if (len(repetidasAlto[alto]) > 2):
+                    while (aux == alto):
                         alto = random.choice(range(tamañoDeSopa))
                 else:
-                    repetidasAlto[alto] = [len(i),ancho]
-                    ok = True
+                    espacioDerecha = tamañoDeSopa-(repetidasAlto[alto][0]+repetidasAlto[alto][1])
+                    print('alto: '+str(alto))
+                    print('palabra: '+str(len(i)))
+                    print('Espacio derecha: '+str(espacioDerecha))
+                    espacioIzquierda = repetidasAlto[alto][1]
+                    print('Espacio izquierda: '+str(espacioIzquierda))
+                    if (len(i) < espacioIzquierda):
+                        diferencia = espacioIzquierda-len(i)
+                        ancho = random.choice(range(diferencia))
+                    elif (len(i) < espacioDerecha):
+                        ancho = random.choice(range(repetidasAlto[alto][0],tamañoDeSopa-1))
+                    else:
+                        while (aux == alto):
+                            alto = random.choice(range(tamañoDeSopa))
+                    if (aux == alto):
+                        repetidasAlto[alto].append(len(i))
+                        repetidasAlto[alto].append(ancho)
             else:
-                repetidasAncho[ancho] = [len(i),alto]
-            posicion.append([i,ancho,alto])
-    print(posicion)
+                repetidasAlto[alto] = [len(i),ancho]
+            posicion.append([i,alto,ancho])
+
 
 
     ##################################################
@@ -110,17 +109,26 @@ def SopaDeLetras(sustantivos=['NOSOTROS','ELLOS'],verbos=['CORRER','LLOVER'],adj
 
     letras = {} #CREO UN DICCIONARIO QUE TIENE COMO CLAVES LAS COORDENADAS CONCATENADAS COMO STRING Y EL VALOR ES LA LETRA
 
-    x = 0
-    y = 0
-    for x in diccionarioCoordenadas.values():
-        print(x)
-    for i in coordenadas:
+    #large = 0
+    print(posicion)
+    print(repetidasAlto)
+    for i in diccionarioCoordenadas.items():
         letter = random.choice(string.ascii_uppercase)
-        graph.DrawRectangle((i[0],i[1]), (i[2],i[3]), fill_color='white', line_color='black') #DIBUJA EL RECTANGULO EN LA POSICION ADECUADA
-        #if (horizontal):
-            #if (i[1] )
-        graph.DrawText('{}'.format(letter),(i[2]+25,i[3]+25)) #ESCRIBE LA LETRA EN LA POSICION
-        letras[str(i[0])+str(i[1])+str(i[2])+str(i[3])] = letter
+        graph.DrawRectangle((i[1][0],i[1][1]), (i[1][2],i[1][3]), fill_color='white', line_color='black') #DIBUJA EL RECTANGULO EN LA POSICION ADECUADA
+        if (horizontal):
+            palabrasQueVan = list(filter(lambda x : x[1] == i[0][0] and x[2] == i[0][1],posicion))
+            if (palabrasQueVan != []):
+                if (palabrasQueVan[0][0] != ""):
+                    graph.DrawText('{}'.format(palabrasQueVan[0][0][0]),(i[1][2]+25,i[1][3]+25)) #ESCRIBE LA LETRA EN LA POSICION
+                    letras[str(i[1][0])+str(i[1][1])+str(i[1][2])+str(i[1][3])] = palabrasQueVan[0][0][0]
+                    palabrasQueVan[0][0] = palabrasQueVan[0][0][1:]
+                    palabrasQueVan[0][2] = palabrasQueVan[0][2]+1
+                else:
+                    graph.DrawText('{}'.format(letter),(i[1][2]+25,i[1][3]+25)) #ESCRIBE LA LETRA EN LA POSICION
+                    letras[str(i[1][0])+str(i[1][1])+str(i[1][2])+str(i[1][3])] = letter
+            else:
+                graph.DrawText('{}'.format(letter),(i[1][2]+25,i[1][3]+25)) #ESCRIBE LA LETRA EN LA POSICION
+                letras[str(i[1][0])+str(i[1][1])+str(i[1][2])+str(i[1][3])] = letter
 
     letrasPresionadas = set() #CONJUNTO CON LAS COORDENDAS DE LAS LETRAS PRESIONADAS CONCATENADAS COMO STRING
     interacciones = 0
