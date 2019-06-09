@@ -2,9 +2,13 @@ import json
 from os import getcwd
 from os.path import join
 
-archivo = join(join(getcwd(),'Archivos'),'datosConfig.json')
-config = open(archivo, 'r', encoding="utf8")
-data = json.load(config)
+try:
+    archivo = join(join(getcwd(),'Archivos'),'datosConfig.json')
+    config = open(archivo, 'r', encoding="utf8")
+    data = json.load(config)
+    Defecto = False
+except FileNotFoundError:
+    Defecto = True
 
 def SopaDeLetras(sustantivos=['PROFESOR','CASA'],verbos=['CORRER','LLOVER'],adjetivos=['GORDO','FEO'],orientacion='Horizontal',
 Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayusculas'):
@@ -14,12 +18,15 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
     from Funciones.funcionesSopa import PalabraMasLarga,AcomodarPalabrasHorizontales,AcomodarPalabrasVerticales
 
 
-    ################################################################################################################################
-    #####   CREA LA ESTRUCTURA diccionarioCoordenadas QUE TIENE TODAS LAS COORDENADAS DE TODOS LOS CUADRADOS, CON SU POSICION  #####
-    ################################################################################################################################
+    ##############################################################################################################################################################
+    #####   CREA LA ESTRUCTURA diccionarioCoordenadas QUE TIENE TODAS LAS COORDENADAS DE TODOS LOS CUADRADOS, CON SU POSICION E INICIALIZACION DE VARIABLES  #####
+    ##############################################################################################################################################################
 
     InfoMax = PalabraMasLarga(sustantivos,verbos,adjetivos) #DEVUELVE UNA LISTA CON EL NUMERO DE LA PALABRA MAS LARGA Y LA CANTIDAD DE PALABRAS
-    Palabras = sustantivos+verbos+adjetivos #JUNTO TODAS LAS PALABRAS EN ESTA LISTA
+    Palabras = {Csus: sustantivos,Cver: verbos,Cadj: adjetivos} #JUNTO TODAS LAS PALABRAS EN ESTE DICCIONARIO SEPARADAS SEGUN SU COLOR
+    cantPalabras = [] #GUARDA LA CANTIDAD DE PALABRAS SEGUN TIPO, 0=SUSTANTIVOS, 1=VERBOS, 2=ADJETIVOS
+    for i in Palabras:
+        cantPalabras.append(len(Palabras[i]))
     diccionarioCoordenadas = {} #DICCIONARIO CON LAS CLAVES COMO SI FUERAN LAS POSICIONES EN LA MATRIZ
     aux = -1
     tamañoDeSopa = InfoMax[0]+(int(InfoMax[1]/2))+1 #ES EL RESULTADO DE LO GRANDE QUE VA A SER LA SOPA DE LETRAS
@@ -46,6 +53,9 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
     ##################################################
 
     layout = [
+                [sg.Text('Cantidad de sustantivos: '+str(cantPalabras[0]),font=(tipografia, 11))],
+                [sg.Text('Cantidad de verbos: '+str(cantPalabras[1]),font=(tipografia, 11))],
+                [sg.Text('Cantidad de adjetivos: '+str(cantPalabras[2]),font=(tipografia, 11))],
     			[sg.Graph(canvas_size=(sizeSopa, sizeSopa), graph_bottom_left=(0,0), graph_top_right=(sizeSopa, sizeSopa), background_color='white',
                 key='graph',enable_events=True,change_submits=False,drag_submits=False)],
                 [sg.Submit('Comprobar'),sg.Text('',size=(11,1)),sg.Submit('Pintar sustantivos',button_color=('black',Csus),key='sus'),
@@ -72,60 +82,34 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
         AcomodarPalabrasVerticales(posicion,repetidas,Palabras,tamañoDeSopa)
 
     ##################################################
-    #####        ESTRUCTURA PARA COMPROBAR       #####
-    ##################################################
-
-    comprobar = []
-    #LISTA CON LA PALABRA Y TODAS LAS POSICIONES DE CADA PALABRA
-    for i in posicion:
-        comprobar.append([i[0],[i[1],i[2]]])
-    if (orientacion == 'Horizontal'):
-        for i in comprobar:
-            for j in range(1,len(i[0])):
-                i[1].append(i[1][0])
-                i[1].append(i[1][1]+j)
-            i[1].sort()
-    else:
-        for i in comprobar:
-            for j in range(1,len(i[0])):
-                i[1].append(i[1][0]+1)
-                i[1].append(i[1][1])
-            i[1].sort()
-    #print(comprobar)
-    ##################################################
     #####         CREA LA SOPA DE LETRAS         #####
     ##################################################
 
     letras = {} #CREO UN DICCIONARIO QUE TIENE COMO CLAVES LAS COORDENADAS CONCATENADAS COMO STRING Y EL VALOR ES LA LETRA
+    letrasSeleccionadas = {} #CREO UN DICCIONARIO QUE TIENE COMO CLAVES LA POSICION DE LA LETRA, ESTE SERVIRA PARA COMPROBAR LA SOPA
 
-
-    for i in diccionarioCoordenadas.items(): #RECORRE EL DICCIONARIO CON LA POSICION COMO CLAVE Y LAS COORDENADAS COMO VALOR
-        if (mayus == 'Mayusculas'):
-            letter = random.choice(string.ascii_uppercase) #SELECCIONA UNA LETRA RANDOM EN MAYUSCULAS
-        else:
-            letter = random.choice(string.ascii_lowercase) #SELECCIONA UNA LETRA RANDOM EN MINUSCULAS
-        graph.DrawRectangle((i[1][0],i[1][1]), (i[1][2],i[1][3]), fill_color='white', line_color='black') #DIBUJA EL RECTANGULO EN LA POSICION ADECUADA
-        if (orientacion == 'Horizontal'):
-            palabrasQueVan = list(filter(lambda x : x[1] == i[0][0] and x[2] == i[0][1],posicion)) #FILTRA DE LA LISTA DE PALABRAS LAS QUE VAN EN ESA POSICION
-            if (palabrasQueVan != []) and (palabrasQueVan[0][0] != ""): #SI SE ENCONTRO UNA PALABRA QUE VA EN LA POSICION Y SI EL STRING TIENE ALGO, O YA FUE ESCRITO
-                graph.DrawText('{}'.format(palabrasQueVan[0][0][0]),(i[1][2]+25,i[1][3]+25),font=tipografia) #ESCRIBE LA LETRA EN LA POSICION
-                letras[str(i[1][0])+str(i[1][1])+str(i[1][2])+str(i[1][3])] = palabrasQueVan[0][0][0] #GUARDA LA PRIMERA LETRA EN EL DICCIONARIO
-                palabrasQueVan[0][0] = palabrasQueVan[0][0][1:] #CORTA LA LETRA QUE YA SE ESCRIBIO Y GUARDO DEL STRING
-                palabrasQueVan[0][2] = palabrasQueVan[0][2]+1 #AUMENTA SU POCISION EN LA FILA
+    cont = 0
+    for i in range(tamañoDeSopa):
+        for j in range(tamañoDeSopa):
+            if (mayus == 'Mayusculas'):
+                letter = random.choice(string.ascii_uppercase) #SELECCIONA UNA LETRA RANDOM EN MAYUSCULAS
             else:
-                graph.DrawText('{}'.format(letter),(i[1][2]+25,i[1][3]+25),font=tipografia) #ESCRIBE LA LETRA EN LA POSICION
-                letras[str(i[1][0])+str(i[1][1])+str(i[1][2])+str(i[1][3])] = letter #GUARDA LA LETRA EN EL DICCIONARIO
-        else:
-            palabrasQueVan = list(filter(lambda x : x[1] == i[0][0] and x[2] == i[0][1],posicion)) #FILTRA DE LA LISTA DE PALABRAS LAS QUE VAN EN ESA POSICION
-            if (palabrasQueVan != []) and (palabrasQueVan[0][0] != ""): #SI SE ENCONTRO UNA PALABRA QUE VA EN LA POSICION Y SI EL STRING TIENE ALGO, O YA FUE ESCRITO
-                graph.DrawText('{}'.format(palabrasQueVan[0][0][0]),(i[1][2]+25,i[1][3]+25),font=tipografia) #ESCRIBE LA LETRA EN LA POSICION
-                letras[str(i[1][0])+str(i[1][1])+str(i[1][2])+str(i[1][3])] = palabrasQueVan[0][0][0] #GUARDA LA PRIMERA LETRA EN EL DICCIONARIO
-                palabrasQueVan[0][0] = palabrasQueVan[0][0][1:] #CORTA LA LETRA QUE YA SE ESCRIBIO Y GUARDO DEL STRING
-                palabrasQueVan[0][1] = palabrasQueVan[0][1]+1 #AUMENTA SU POCISION EN LA FILA
-            else:
-                graph.DrawText('{}'.format(letter),(i[1][2]+25,i[1][3]+25),font=tipografia) #ESCRIBE LA LETRA EN LA POSICION
-                letras[str(i[1][0])+str(i[1][1])+str(i[1][2])+str(i[1][3])] = letter #GUARDA LA LETRA EN EL DICCIONARIO
-
+                letter = random.choice(string.ascii_lowercase) #SELECCIONA UNA LETRA RANDOM EN MINUSCULAS
+            c = diccionarioCoordenadas[(i,j)]
+            a = list(diccionarioCoordenadas.keys())
+            graph.DrawRectangle((c[0],c[1]), (c[2],c[3]), fill_color='white', line_color='black') #DIBUJA EL RECTANGULO EN LA POSICION ADECUADA
+            palabrasQueVan = list(filter(lambda x : x[1] == a[cont][0] and x[2] == a[cont][1],posicion))
+            cont = cont+1
+            if (palabrasQueVan != []) and (palabrasQueVan[0][0] != ""):
+                letter = palabrasQueVan[0][0][0]
+                palabrasQueVan[0][0] = palabrasQueVan[0][0][1:]
+                if (orientacion == 'Horizontal'):
+                    palabrasQueVan[0][2] = palabrasQueVan[0][2]+1
+                else:
+                    palabrasQueVan[0][1] = palabrasQueVan[0][1]+1
+                letrasSeleccionadas[(i,j)] = [letter,False,palabrasQueVan[0][3]]
+            graph.DrawText('{}'.format(letter),(c[2]+25,c[3]+25),font=tipografia)
+            letras[str(c[0])+str(c[1])+str(c[2])+str(c[3])] = letter
 
     ##################################################
     #####           EVENTOS EN LA INTERFAZ       #####
@@ -159,18 +143,33 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
                     y1 = coor[0][1][1]
                     x2 = coor[0][1][2]
                     y2 = coor[0][1][3]
-                    if (str(x1)+str(y1)+str(x2)+str(y2) in letrasPresionadas): #SI ESA COORDENADA QUE SE PRESIONO YA FUE PRESIONADA ANTES
+                    if (str(posX)+str(posY) in letrasPresionadas): #SI ESA COORDENADA QUE SE PRESIONO YA FUE PRESIONADA ANTES
                         graph.DrawRectangle((x1,y1), (x2,y2), fill_color='white', line_color='black') #DIBUJA OTRA VEZ EL RECTANGULO BLANCO
-                        letrasPresionadas.remove(str(x1)+str(y1)+str(x2)+str(y2)) #BORRA LA LETRA PRESIONADA
+                        letrasPresionadas.remove(str(posX)+str(posY)) #BORRA LA LETRA PRESIONADA
+                        ok = list(filter(lambda x : (posX,posY) == x,letrasSeleccionadas.keys()))
+                        if (ok != []):
+                            letrasSeleccionadas[(posX,posY)][1] = False
                     else:
                         try:
                             graph.DrawRectangle((x1,y1), (x2,y2), fill_color=ColorSelect, line_color='black') #SI NO FUE PRESIONADA DIBUJA SEGUN EL COLOR SELECCIONADO
-                            letrasPresionadas.add(str(x1)+str(y1)+str(x2)+str(y2)) #AGREGA LA COORDENADA COMO PRESIONADA
+                            letrasPresionadas.add(str(posX)+str(posY)) #AGREGA LA COORDENADA COMO PRESIONADA
+                            ok = list(filter(lambda x : (posX,posY) == x and ColorSelect == letrasSeleccionadas[x][2],letrasSeleccionadas.keys()))
+                            if (ok != []):
+                                letrasSeleccionadas[(posX,posY)][1] = True
                         except NameError:
                             sg.Popup('Elegi un color antes de empezar a jugar')
                     graph.DrawText('{}'.format(letras[str(x1)+str(y1)+str(x2)+str(y2)]),(x2+25,y2+25),font=tipografia) #ESCRIBE LA LETRA QUE PETERNECIA A ESA COORDENADA
             except IndexError:
                 pass
+        if (button == 'Comprobar'):
+            comprobar = list(map(lambda x : x[1],letrasSeleccionadas.values()))
+            if (False in comprobar):
+                sg.Popup('La sopa no se completo correctamente')
+            else:
+                sg.Popup('La sopa se completo correctamente')
 
-SopaDeLetras(orientacion=data['orientacion'],tipografia=data['tipografia'],mayus=data['mayus'],Csus=data['colorSustantivos'],Cadj=data['colorAdjetivos'],
-Cver=data['colorVerbos'],sustantivos=data['sustantivosElegidos'],verbos=data['verbosElegidos'],adjetivos=data['adjetivosElegidos'])
+if (Defecto):
+    SopaDeLetras()
+else:
+    SopaDeLetras(orientacion=data['orientacion'],tipografia=data['tipografia'],mayus=data['mayus'],Csus=data['colorSustantivos'],Cadj=data['colorAdjetivos'],
+    Cver=data['colorVerbos'],sustantivos=data['sustantivosElegidos'],verbos=data['verbosElegidos'],adjetivos=data['adjetivosElegidos'])

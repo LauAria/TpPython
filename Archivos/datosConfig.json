@@ -1,7 +1,7 @@
 {
-    "orientacion": "Horizontal",
+    "orientacion": "Vertical",
     "tipografia": "Courier",
-    "mayus": "Minusculas",
+    "mayus": "Mayusculas",
     "cantSustantivos": "2",
     "cantAdjetivos": "1",
     "cantVerbos": "1",
@@ -28,13 +28,14 @@
         "saltar": "1Impulsarse o lanzarse al aire.2Lanzarse al vacio.3Acci\u00f3n de un objeto que se separa r\u00e1pidamente de un lugar y se detiene en otro.4Surgir de repente."
     },
     "sustantivosElegidos": [
-        "asdaddasd",
-        "avion"
+        "PROFESOR",
+        "AVION"
     ],
     "adjetivosElegidos": [
-        "lindo"
+        "LINDO",
+	"FEO"
     ],
     "verbosElegidos": [
-        "saltar"
+        "SALTAR"
     ]
 }
