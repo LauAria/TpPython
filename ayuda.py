@@ -1,4 +1,4 @@
-{
+datos = {
     "orientacion": "Horizontal",
     "tipografia": "Courier",
     "mayus": "Mayusculas",
@@ -38,3 +38,45 @@
         "jugar"
     ]
 }
+
+import PySimpleGUI as sg
+import random
+
+#Juntos los datos y los diccionarios y mezclo la lista para que las ayudas no sigan un patrón
+listaTotal = datos['sustantivosElegidos'] + datos['adjetivosElegidos'] + datos['verbosElegidos']
+random.shuffle(listaTotal)
+
+dicTotal = dict(datos['definicionSustantivos'])
+dicTotal.update(datos['definicionAdjetivos'])
+dicTotal.update(datos['definicionVerbos'])
+
+
+palabrasStr = '\n'.join(listaTotal)
+definicionesStr = ''
+for x in dicTotal.keys():
+    definicionesStr = definicionesStr + 'DEFINICION: \n\n'
+    definicionesStr = definicionesStr + dicTotal[x]
+    definicionesStr = definicionesStr + '\n--------------------------------\n'
+
+
+menu_def = [['Ayuda', ['Lista de palabras', 'Definiciones']]]
+
+layout = [
+            [sg.Menu(menu_def)],
+            [sg.T('Nada', font = ('Arial', 50))]
+         ]
+
+window = sg.Window('prueba', resizable=True).Layout(layout)
+
+
+while True:
+    button, values = window.Read()
+
+    if (button == 'Definiciones'):
+        sg.PopupScrolled(definicionesStr, size=(100, 30), location=(250, 150), title='Definiciones')
+
+    elif (button == 'Lista de palabras'):
+        sg.PopupScrolled(palabrasStr, size=(20, 20), location=(250, 150), title='Lista de palabras')
+
+    else:
+        break
