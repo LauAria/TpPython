@@ -3,6 +3,7 @@
 import PySimpleGUI as sg
 import buscador
 import random
+import os
 import json
 
 #Constantes
@@ -26,7 +27,6 @@ datos['definicionVerbos'] = {}
 
 
 tipografias = ['Garamond', 'Helvetica', 'Courier', 'Fixedsys', 'Times', 'Verdana']
-menu_def = [['Abrir', ['Juego', 'Configuración']], ['Seleccionar', ['Tipografia']]]
 
 #funciones
 
@@ -236,9 +236,12 @@ layoutTipografia = [
                    ]
 
 layoutPrincipal = [
-                     [sg.Menu(menu_def)],
                      [sg.T('Configuración', font = ('Arial', 20))],
-                     [sg.Column(column1, key = 'columnaSustantivos'), sg.Column(column2, key = 'columnaAdjetivos'), sg.Column(column3, key = 'columnaVerbos')]
+                     [sg.Column(column1, key = 'columnaSustantivos'), sg.Column(column2, key = 'columnaAdjetivos'),
+                      sg.Column(column3, key = 'columnaVerbos')],
+                     [sg.T('-------------------------------------------')],
+                     [sg.B('Configurar formato y orientación', key = 'config')],
+                     [sg.B('Guardar configuración')]
                   ]
 
 
@@ -294,15 +297,21 @@ while True:
         window.FindElement('cargadoVerbos').Update(visible = True)
 
     #abrir ventaja de tipografia, mayus y minus y vertical o horizontal
-    elif (button == 'Tipografia'):
+    elif (button == 'config'):
         abrirVentanaTipografia(window)
 
     else:
         break
 
+#Elijo sustantivos, adjetivos y verbos random
 datos['sustantivosElegidos'], datos['definicionSustantivos'] = filtrarSegunCantidad(datos['sustantivos'], datos['definicionSustantivos'], datos['cantSustantivos'])
 datos['adjetivosElegidos'], datos['definicionAdjetivos'] = filtrarSegunCantidad(datos['adjetivos'], datos['definicionAdjetivos'], datos['cantAdjetivos'])
 datos['verbosElegidos'], datos['definicionVerbos'] = filtrarSegunCantidad(datos['verbos'], datos['definicionVerbos'], datos['cantVerbos'])
 
-archivo = open('datosConfig.json', 'w')
+#Creo el path
+path = os.path.join(os.getcwd(), 'Archivos')
+path = os.path.join(path, 'datosConfig.json')
+
+#Escribo el json
+archivo = open(path, 'w')
 json.dump(datos, archivo, indent = 4)
