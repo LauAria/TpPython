@@ -306,5 +306,3 @@ datos['verbosElegidos'], datos['definicionVerbos'] = filtrarSegunCantidad(datos[
 
 archivo = open('datosConfig.json', 'w')
 json.dump(datos, archivo, indent = 4)
-
-#Falta pasar todos los botones que son iguales a funciones para que queda mas lindo el codigo
