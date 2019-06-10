@@ -2,25 +2,22 @@ import json
 from os import getcwd
 from os.path import join
 
-try:
-    archivo = join(join(getcwd(),'Archivos'),'datosConfig.json')
-    config = open(archivo, 'r', encoding="utf8")
-    data = json.load(config)
-    Defecto = False
+try: #EXCEPCION POR SI NO SE GENERO NINGUN ARCHIVO DE CONFIGURACION
+    archivo = join(join(getcwd(),'Archivos'),'datosConfig.json')#LA RUTA DEL ARCHIVO
+    config = open(archivo, 'r', encoding="utf8") #ABRE EL ARCHIVO EN MODO LECTURA
+    data = json.load(config) #LEE LOS DATOS Y LOS GUARDA EN DATA
+    Defecto = False #VARIABLE PARA SABER SI USAR VALORES POR DEFECTO O NO
 except FileNotFoundError:
-    Defecto = True
+    Defecto = True #VARIABLE PARA SABER SI USAR VALORES POR DEFECTO O NO
 
 def SopaDeLetras(sustantivos=['PROFESOR','CASA'],verbos=['CORRER','LLOVER'],adjetivos=['GORDO','FEO'],orientacion='Horizontal',
 Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayusculas'):
     import PySimpleGUI as sg
-    import random
-    import string
-    from Funciones.funcionesSopa import PalabraMasLarga,AcomodarPalabrasHorizontales,AcomodarPalabrasVerticales
+    from Funciones.funcionesSopa import PalabraMasLarga,AcomodarPalabrasHorizontales,AcomodarPalabrasVerticales,dibujarSopaDeLetras
 
-
-    ##############################################################################################################################################################
-    #####   CREA LA ESTRUCTURA diccionarioCoordenadas QUE TIENE TODAS LAS COORDENADAS DE TODOS LOS CUADRADOS, CON SU POSICION E INICIALIZACION DE VARIABLES  #####
-    ##############################################################################################################################################################
+    ##########################################################################################################################################################################
+    #####   CREA LA ESTRUCTURA diccionarioCoordenadas QUE TIENE TODAS LAS COORDENADAS DE TODOS LOS CUADRADOS, CON SU POSICION COMO CLAVE; E INICIALIZACION DE VARIABLES  #####
+    ##########################################################################################################################################################################
 
     InfoMax = PalabraMasLarga(sustantivos,verbos,adjetivos) #DEVUELVE UNA LISTA CON EL NUMERO DE LA PALABRA MAS LARGA Y LA CANTIDAD DE PALABRAS
     Palabras = {Csus: sustantivos,Cver: verbos,Cadj: adjetivos} #JUNTO TODAS LAS PALABRAS EN ESTE DICCIONARIO SEPARADAS SEGUN SU COLOR
@@ -30,8 +27,8 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
     diccionarioCoordenadas = {} #DICCIONARIO CON LAS CLAVES COMO SI FUERAN LAS POSICIONES EN LA MATRIZ
     aux = -1
     tamañoDeSopa = InfoMax[0]+(int(InfoMax[1]/2))+1 #ES EL RESULTADO DE LO GRANDE QUE VA A SER LA SOPA DE LETRAS
-    sizeSopa = 50*tamañoDeSopa
-    size = int((50*tamañoDeSopa)/50)
+    sizeSopa = 50*tamañoDeSopa #TAMAÑO DE LA GRILLA DONDE SE VA A GRAFICAR
+    size = int((50*tamañoDeSopa)/50) #LONGITUD DE LA SOPA POR CUADRADO
     alto_fin = sizeSopa+49
     alto_inicio = sizeSopa
     for x in range(size): #VALOR DE COLUMNAS
@@ -58,7 +55,7 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
                 [sg.Text('Cantidad de adjetivos: '+str(cantPalabras[2]),font=(tipografia, 11))],
     			[sg.Graph(canvas_size=(sizeSopa, sizeSopa), graph_bottom_left=(0,0), graph_top_right=(sizeSopa, sizeSopa), background_color='white',
                 key='graph',enable_events=True,change_submits=False,drag_submits=False)],
-                [sg.Submit('Comprobar'),sg.Text('',size=(11,1)),sg.Submit('Pintar sustantivos',button_color=('black',Csus),key='sus'),
+                [sg.Submit('Comprobar',button_color=('black','white')),sg.Text('',size=(11,1)),sg.Submit('Pintar sustantivos',button_color=('black',Csus),key='sus'),
                     sg.Submit('Pintar verbos',button_color=('black',Cver),key='ver'),sg.Submit('Pintar adjetivos',button_color=('black',Cadj),key='adj')],
                 [sg.Submit('Salir')]
              ]
@@ -88,28 +85,7 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
     letras = {} #CREO UN DICCIONARIO QUE TIENE COMO CLAVES LAS COORDENADAS CONCATENADAS COMO STRING Y EL VALOR ES LA LETRA
     letrasSeleccionadas = {} #CREO UN DICCIONARIO QUE TIENE COMO CLAVES LA POSICION DE LA LETRA, ESTE SERVIRA PARA COMPROBAR LA SOPA
 
-    cont = 0
-    for i in range(tamañoDeSopa):
-        for j in range(tamañoDeSopa):
-            if (mayus == 'Mayusculas'):
-                letter = random.choice(string.ascii_uppercase) #SELECCIONA UNA LETRA RANDOM EN MAYUSCULAS
-            else:
-                letter = random.choice(string.ascii_lowercase) #SELECCIONA UNA LETRA RANDOM EN MINUSCULAS
-            c = diccionarioCoordenadas[(i,j)]
-            a = list(diccionarioCoordenadas.keys())
-            graph.DrawRectangle((c[0],c[1]), (c[2],c[3]), fill_color='white', line_color='black') #DIBUJA EL RECTANGULO EN LA POSICION ADECUADA
-            palabrasQueVan = list(filter(lambda x : x[1] == a[cont][0] and x[2] == a[cont][1],posicion))
-            cont = cont+1
-            if (palabrasQueVan != []) and (palabrasQueVan[0][0] != ""):
-                letter = palabrasQueVan[0][0][0]
-                palabrasQueVan[0][0] = palabrasQueVan[0][0][1:]
-                if (orientacion == 'Horizontal'):
-                    palabrasQueVan[0][2] = palabrasQueVan[0][2]+1
-                else:
-                    palabrasQueVan[0][1] = palabrasQueVan[0][1]+1
-                letrasSeleccionadas[(i,j)] = [letter,False,palabrasQueVan[0][3]]
-            graph.DrawText('{}'.format(letter),(c[2]+25,c[3]+25),font=tipografia)
-            letras[str(c[0])+str(c[1])+str(c[2])+str(c[3])] = letter
+    dibujarSopaDeLetras(tamañoDeSopa,mayus,graph,tipografia,orientacion,posicion,letras,letrasSeleccionadas,diccionarioCoordenadas)
 
     ##################################################
     #####           EVENTOS EN LA INTERFAZ       #####
@@ -157,16 +133,16 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
                             if (ok != []):
                                 letrasSeleccionadas[(posX,posY)][1] = True
                         except NameError:
-                            sg.Popup('Elegi un color antes de empezar a jugar')
+                            sg.Popup('Elegi un color antes de empezar a jugar',title='ERROR')
                     graph.DrawText('{}'.format(letras[str(x1)+str(y1)+str(x2)+str(y2)]),(x2+25,y2+25),font=tipografia) #ESCRIBE LA LETRA QUE PETERNECIA A ESA COORDENADA
             except IndexError:
                 pass
         if (button == 'Comprobar'):
             comprobar = list(map(lambda x : x[1],letrasSeleccionadas.values()))
             if (False in comprobar):
-                sg.Popup('La sopa no se completo correctamente')
+                sg.Popup('La sopa no se completo correctamente',title='INCORRECTO')
             else:
-                sg.Popup('La sopa se completo correctamente')
+                sg.Popup('La sopa se completo correctamente',title='EUREKA')
 
 if (Defecto):
     SopaDeLetras()

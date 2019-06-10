@@ -1,7 +1,7 @@
 
-###################################################################################################
-#####   DEVUELVE UNA LISTA CON LA LONGITUD DE LA PALABRA MAS LARGA Y LA CANTIDAD DE PALABRAS  #####
-###################################################################################################
+###########################################################################################################
+#####      DEVUELVE UNA LISTA CON LA LONGITUD DE LA PALABRA MAS LARGA Y LA CANTIDAD DE PALABRAS       #####
+###########################################################################################################
 
 def PalabraMasLarga(sus,verbos,adjetivos):
       info = [-1,0]
@@ -19,11 +19,11 @@ def PalabraMasLarga(sus,verbos,adjetivos):
               info[0] = len(x)
       return info
 
-###################################################################################################
+#############################################################################################################
 
-###################################################################################################################################################################################
-#####                                                 ACOMODA LA POSICION DE LAS PALABRAS HORIZONTALES                                                                        #####
-###################################################################################################################################################################################
+#############################################################################################################
+#####                             ACOMODA LA POSICION DE LAS PALABRAS HORIZONTALES                      #####
+#############################################################################################################
 
 def AcomodarPalabrasHorizontales(posicion,repetidas,Palabras,tamañoDeSopa):
     import random
@@ -61,11 +61,11 @@ def AcomodarPalabrasHorizontales(posicion,repetidas,Palabras,tamañoDeSopa):
             repetidas[alto] = [len(i[0]),ancho] #AGREGA AL DICCIONARIO EN QUE LUGAR SE GUARDO LA PALABRA
         posicion.append([i[0],alto,ancho,i[1]]) #AGERGA A LA LISTA LA PALABRA, LA POSICION Y EL COLOR
 
-###################################################################################################################################################################################
+##############################################################################################################
 
-###################################################################################################################################################################################
-#####                                                 ACOMODA LA POSICION DE LAS PALABRAS VERTICALES                                                                          #####
-###################################################################################################################################################################################
+##############################################################################################################
+#####                             ACOMODA LA POSICION DE LAS PALABRAS VERTICALES                         #####
+##############################################################################################################
 
 def AcomodarPalabrasVerticales(posicion,repetidas,Palabras,tamañoDeSopa):
     import random
@@ -103,4 +103,37 @@ def AcomodarPalabrasVerticales(posicion,repetidas,Palabras,tamañoDeSopa):
             repetidas[ancho] = [len(i[0]),alto] #AGREGA AL DICCIONARIO EN QUE LUGAR SE GUARDO LA PALABRA
         posicion.append([i[0],alto,ancho,i[1]]) #AGERGA A LA LISTA LA PALABRA, LA POSICION Y EL COLOR
 
-###################################################################################################################################################################################
+###############################################################################################################
+
+###############################################################################################################
+#####   DIBUJA EN EL GRAFICO EN LA POSICION QUE CORRESPONDA, UNA LETRA RANDOM O UNA LETRA DE UNA PALABRA  #####
+###############################################################################################################
+
+def dibujarSopaDeLetras(tamañoDeSopa,mayus,graph,tipografia,orientacion,posicion,letras,letrasSeleccionadas,diccionarioCoordenadas):
+    import random
+    import string
+    cont = 0
+    #SE RECORRE ESTILO MATRIZ
+    for i in range(tamañoDeSopa):
+        for j in range(tamañoDeSopa):
+            if (mayus == 'Mayusculas'):
+                letter = random.choice(string.ascii_uppercase) #SELECCIONA UNA LETRA RANDOM EN MAYUSCULAS
+            else:
+                letter = random.choice(string.ascii_lowercase) #SELECCIONA UNA LETRA RANDOM EN MINUSCULAS
+            c = diccionarioCoordenadas[(i,j)] #ME GUARDO LA LISTA DE COORDENADAS QUE HAY EN ESA POSICION
+            a = list(diccionarioCoordenadas.keys()) #LISTA DE TUPLAS CON LAS CLAVES, PARA RECORRERLAS CON LA VARIABLE CONT
+            graph.DrawRectangle((c[0],c[1]), (c[2],c[3]), fill_color='white', line_color='black') #DIBUJA EL RECTANGULO EN LA POSICION ADECUADA
+            palabrasQueVan = list(filter(lambda x : x[1] == a[cont][0] and x[2] == a[cont][1],posicion)) #SE FIJA SI EN LA POSICION ACTUAL VA LA LETRA DE ALGUNA PALABRA
+            cont = cont+1
+            if (palabrasQueVan != []) and (palabrasQueVan[0][0] != ""): #SI SE ENCONTRO QUE VA LA LETRA DE UNA PALABRA
+                letter = palabrasQueVan[0][0][0] #ME GUARDO LA PRIMER LETRA
+                palabrasQueVan[0][0] = palabrasQueVan[0][0][1:] #CORTO LA PRIMER LETRA
+                if (orientacion == 'Horizontal'): #SI ES HORIZONTAL
+                    palabrasQueVan[0][2] = palabrasQueVan[0][2]+1 #AVANZO A LA SIGUIENTE POSICION DEL EJE X
+                else:
+                    palabrasQueVan[0][1] = palabrasQueVan[0][1]+1 #AVANZO A LA SIGUIENTE POSICION DEL EJE Y
+                letrasSeleccionadas[(i,j)] = [letter,False,palabrasQueVan[0][3]] #AGREGO AL DICCIONARIO EN ESA POSICION, LA LETRA, FALSO, Y EL COLOR DE A QUE TIPO DE PALABRA SE REFIERE
+            graph.DrawText('{}'.format(letter),(c[2]+25,c[3]+25),font=tipografia) #DIBUJA LA LETRA
+            letras[str(c[0])+str(c[1])+str(c[2])+str(c[3])] = letter #ME GUARDO LA LETRA QUE SE DIBUJO EN ESA COORDENADA
+
+###############################################################################################################
