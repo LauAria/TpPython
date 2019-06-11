@@ -31,6 +31,9 @@ tipografias = ['Garamond', 'Helvetica', 'Courier', 'Fixedsys', 'Times', 'Verdana
 #funciones
 
 def abrirVentanaTipografia(window):
+    """funcion que esconde la ventana actual (pasada por parámetro), y abre la ventana que nos permite elegir
+    el formato de palabra y la orientación de la sopa de letras"""
+
     window.Hide()
     global layoutTipografia
     global datos
@@ -65,6 +68,7 @@ def abrirVentanaTipografia(window):
     window.UnHide()
 
 def cargarColor(tipo):
+    """Funcion que carga el color elegido al tipo que se le pasa como parámetro, comprobando que no sea muy claro"""
 
     #me guardo el tipo en diferentes formatos
     tipoC = tipo.capitalize()
@@ -86,6 +90,8 @@ def cargarColor(tipo):
         sg.Popup('Tiene que elegir un color antes.')
 
 def agregar(tipo):
+    """funcion que agrega una palabra a la lista del tipo que le pasemos. Usa funciones de otro .py para
+    comprobar que la palabra existe y es del tipo especificado"""
 
     #me guardo el tipo en diferentes formatos
     tipoC = tipo.capitalize()
@@ -119,6 +125,7 @@ def agregar(tipo):
             window.FindElement('spin' + tipoCS).Update(values = list(map(lambda x: x + 1, (range(len(datos[tipoS]))))))
 
 def eliminar(tipo):
+    """funcion que elimina una palabra ya cargada, se le pasa el tipo para saber de cual lista borrar"""
 
     #me guardo el tipo en diferentes formatos
     tipoC = tipo.capitalize()
@@ -241,7 +248,7 @@ layoutPrincipal = [
                       sg.Column(column3, key = 'columnaVerbos')],
                      [sg.T('-------------------------------------------')],
                      [sg.B('Configurar formato y orientación', key = 'config')],
-                     [sg.B('Guardar configuración')]
+                     [sg.B('Guardar configuración', key = 'guardar')]
                   ]
 
 
@@ -263,7 +270,6 @@ while True:
         agregar('verbo')
 
     #botones de borrado
-
     elif (button == 'eliminarSustantivo'):
         eliminar('sustantivo')
 
@@ -300,7 +306,24 @@ while True:
     elif (button == 'config'):
         abrirVentanaTipografia(window)
 
+    #compruebo que la cantidad de palabras sea mayor a 3 y menor a 10, si cumple con esto cierro la ventana
+    elif (button == 'guardar'):
+        if(int(datos['cantSustantivos']) + int(datos['cantAdjetivos']) + int(datos['cantVerbos']) > 10):
+            sg.Popup('La cantidad de palabras seleccionadas es muy grande, disminuya la cantidad.', title = 'Advertencia')
+            window.FindElement('cargadoSustantivos').Update(visible = False)
+            window.FindElement('cargadoAdjetivos').Update(visible = False)
+            window.FindElement('cargadoVerbos').Update(visible = False)
+        elif(int(datos['cantSustantivos']) + int(datos['cantAdjetivos']) + int(datos['cantVerbos']) < 3):
+            sg.Popup('La cantidad de palabras seleccionadas es muy chica, aumente la cantidad.', title = 'Advertencia')
+            window.FindElement('cargadoSustantivos').Update(visible = False)
+            window.FindElement('cargadoAdjetivos').Update(visible = False)
+            window.FindElement('cargadoVerbos').Update(visible = False)
+        else:
+            sg.Popup('Cambios guardados!')
+            break
+
     else:
+        sg.Popup('Cambios guardados!')
         break
 
 #Elijo sustantivos, adjetivos y verbos random

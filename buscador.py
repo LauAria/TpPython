@@ -95,6 +95,7 @@ def segunPattern(palabra, tipo):
 	clasificacion = propiedades[1]
 
 	#pregunto si coincide
+	resultado = ''
 	if(clasificacion in clasifSustantivos):
 		resultado = 'Sustantivo'
 	elif(clasificacion in clasifAdjetivos):
