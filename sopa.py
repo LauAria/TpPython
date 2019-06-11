@@ -11,7 +11,7 @@ except FileNotFoundError:
     Defecto = True #VARIABLE PARA SABER SI USAR VALORES POR DEFECTO O NO
 
 def SopaDeLetras(sustantivos=['PROFESOR','CASA'],verbos=['CORRER','LLOVER'],adjetivos=['GORDO','FEO'],orientacion='Horizontal',
-Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayusculas'):
+Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayusculas',ayuda=False):
     import PySimpleGUI as sg
     from Funciones.funcionesSopa import PalabraMasLarga,AcomodarPalabrasHorizontales,AcomodarPalabrasVerticales,dibujarSopaDeLetras
 
@@ -55,12 +55,19 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
                 [sg.Text('Cantidad de adjetivos: '+str(cantPalabras[2]),font=(tipografia, 11))],
     			[sg.Graph(canvas_size=(sizeSopa, sizeSopa), graph_bottom_left=(0,0), graph_top_right=(sizeSopa, sizeSopa), background_color='white',
                 key='graph',enable_events=True,change_submits=False,drag_submits=False)],
-                [sg.Submit('Comprobar',button_color=('black','white')),sg.Text('',size=(11,1)),sg.Submit('Pintar sustantivos',button_color=('black',Csus),key='sus'),
-                    sg.Submit('Pintar verbos',button_color=('black',Cver),key='ver'),sg.Submit('Pintar adjetivos',button_color=('black',Cadj),key='adj')],
+                [sg.Submit('Pintar sustantivos',button_color=('black',Csus),key='sus'),sg.Submit('Pintar verbos',button_color=('black',Cver),key='ver'),
+                    sg.Submit('Pintar adjetivos',button_color=('black',Cadj),key='adj'),sg.Submit('Comprobar',button_color=('black','white'))],
                 [sg.Submit('Salir')]
              ]
 
+    #MenuAyuda = [
+    #                [sg.Submit('Definiciones',size=(20,2))],
+    #                [sg.Submit('Solo las palabras',size=(20,2))]
+    #            ]
+
     window = sg.Window('Sopa de letras', layout).Finalize()
+
+    #windowAyuda = sg.Window('Menu', MenuAyuda).Finalize()
 
     graph = window.FindElement('graph')
 
@@ -70,7 +77,7 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
     ##################################################
 
     posicion = [] #LISTA CON LAS LETRAS Y SUS POSICIONES EN LA SOPA DE LETRAS
-
+    CopyPosicion = [] #PARA HACER UNA COPIA DE POSICION
     repetidas = {} #DICCIONARIO CON LA COORDENADA DE ALTO O ANCHO COMO CLAVE, ESTO PARA PROCESAR TANTO LAS REPETIDAS EN LAS HORIZONTALES COMO LAS VERTICALES
 
     if (orientacion == 'Horizontal'):
@@ -82,10 +89,11 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
     #####         CREA LA SOPA DE LETRAS         #####
     ##################################################
 
+    CopyPosicion = list(map(lambda x : x.copy(),posicion)) #UNA COPIA DE POSICION, PORQUE ESTA VA A SER MODIFICADA
     letras = {} #CREO UN DICCIONARIO QUE TIENE COMO CLAVES LAS COORDENADAS CONCATENADAS COMO STRING Y EL VALOR ES LA LETRA
     letrasSeleccionadas = {} #CREO UN DICCIONARIO QUE TIENE COMO CLAVES LA POSICION DE LA LETRA, ESTE SERVIRA PARA COMPROBAR LA SOPA
 
-    dibujarSopaDeLetras(tamañoDeSopa,mayus,graph,tipografia,orientacion,posicion,letras,letrasSeleccionadas,diccionarioCoordenadas)
+    dibujarSopaDeLetras(tamañoDeSopa,mayus,graph,tipografia,orientacion,CopyPosicion,letras,letrasSeleccionadas,diccionarioCoordenadas)
 
     ##################################################
     #####           EVENTOS EN LA INTERFAZ       #####
@@ -138,11 +146,29 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
             except IndexError:
                 pass
         if (button == 'Comprobar'):
-            comprobar = list(map(lambda x : x[1],letrasSeleccionadas.values()))
-            if (False in comprobar):
-                sg.Popup('La sopa no se completo correctamente',title='INCORRECTO')
+            palabrasAcertadas = []
+            palabrasErradas = []
+            aux = list(map(lambda x : x.copy(),posicion)) #UNA COPIA DE LA LISTA ORIGINAL, ESTA SE VA A MODIFICAR
+            for i in aux: #ITERO POR CADA SUBLISTA DE AUX
+                ok = True
+                for j in range(len(i[0])): #ITERO LA CANTIDAD DE VECES SEGUN LA LONGITUD DE LA PALABRA
+                    if (letrasSeleccionadas[(i[1],i[2])][1] == False): #ME FIJO SI EN ESA POSICION NO SE HIZO CLICK
+                        ok = False
+                    if (orientacion == 'Horizontal'): #SI ES HORIZONTAL, SUMO SU VALOR DE X PARA AVANZAR Y FIJARME LA POSICION DE SU SIGUIENTE LETRA
+                        i[2] = i[2]+1
+                    else: #SI ES VERTICAL, SUMO SU VALOR DE Y PARA AVANZAR Y FIJARME LA POSICION DE SU SIGUIENTE LETRA
+                        i[1] = i[1]+1
+                if (ok):
+                    palabrasAcertadas.append(i[0]) #AGREGO LA PALABRA SI ESTAN TODOS SUS CARACTERES SELECCIONADOS
+                else:
+                    palabrasErradas.append(i[0]) #AGREGO LA PALABRA SI NO ESTAN TODOS SUS CARACTERES SELECCIONADOS
+            if (palabrasErradas != []): #SI LA LISTA DE PALABRAS ERRADAS TIENE ALGO, LA SOPA NO SE COMPLETO
+                string = ""
+                for i in palabrasErradas:
+                    string += i+"  "
+                sg.Popup('La sopa no se completo correctamente','Faltan marcar correctamente las palabras: ',string,title='INCORRECTO')
             else:
-                sg.Popup('La sopa se completo correctamente',title='EUREKA')
+                sg.Popup('La sopa se completo correctamente',title='FELICIDADES')
 
 if (Defecto):
     SopaDeLetras()
