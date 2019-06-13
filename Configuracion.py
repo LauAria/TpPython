@@ -8,24 +8,33 @@ import json
 
 #Constantes
 #valores por defecto para el json (por si se cierra el programa sin completar los datos)
-datos = {}
-datos['orientacion'] = 'Horizontal'
-datos['tipografia'] = 'Arial'
-datos['mayus'] = 'Mayusculas'
-datos['cantSustantivos'] = 0
-datos['cantAdjetivos'] = 0
-datos['cantVerbos'] = 0
-datos['colorSustantivos'] = '#00ff00'
-datos['colorAdjetivos'] = '#0000ff'
-datos['colorVerbos'] = '#ff0000'
-datos['sustantivos'] = []
-datos['adjetivos'] = []
-datos['verbos'] = []
-datos['definicionSustantivos'] = {}
-datos['definicionAdjetivos'] = {}
-datos['definicionVerbos'] = {}
+try:
+    archivo = open (os.path.join(os.getcwd(),"Archivos","datosConfig.json"), "r")
+    datos = json.load(archivo)
+    archivo.close()
+except:
+    sg.Popup('No se pudo importar la configuración', title = 'Aviso')
+    datos = {}
+    datos['orientacion'] = 'Horizontal'
+    datos['tipografia'] = 'Arial'
+    datos['mayus'] = 'Mayusculas'
+    datos['cantSustantivos'] = 0
+    datos['cantAdjetivos'] = 0
+    datos['cantVerbos'] = 0
+    datos['colorSustantivos'] = '#00ff00'
+    datos['colorAdjetivos'] = '#0000ff'
+    datos['colorVerbos'] = '#ff0000'
+    datos['sustantivos'] = []
+    datos['adjetivos'] = []
+    datos['verbos'] = []
+    datos['definicionTodosSustantivos'] = {}
+    datos['definicionTodosAdjetivos'] = {}
+    datos['definicionTodosVerbos'] = {}
+    datos['definicionSustantivos'] = {}
+    datos['definicionAdjetivos'] = {}
+    datos['definicionVerbos'] = {}
 
-
+listaNula = ['0']
 tipografias = ['Garamond', 'Helvetica', 'Courier', 'Fixedsys', 'Times', 'Verdana']
 
 #funciones
@@ -118,7 +127,7 @@ def agregar(tipo):
             #Cargo todos los datos
             global datos
             datos[tipoS].append(palabra)
-            datos['definicion' + tipoCS][palabra] = definicion
+            datos['definicionTodos' + tipoCS][palabra] = definicion
             global window
             global values
             window.FindElement('listbox' + tipoCS).Update(values = datos[tipoS])
@@ -137,7 +146,7 @@ def eliminar(tipo):
         palabra = values['listbox' + tipoCS][0]
         global datos
         datos[tipoS].remove(palabra)
-        del datos['definicion' + tipoCS][palabra]
+        del datos['definicionTodos' + tipoCS][palabra]
         global window
         window.FindElement('listbox' + tipoCS).Update(values = datos[tipoS])
         if (len(datos[tipoS]) == 0):
@@ -153,6 +162,7 @@ def filtrarSegunCantidad(lista, dic, cant):
     y las devuelve en una lista nueva, tambien actualiza el diccionario para que solo
     queden las claves de la lista"""
 
+    lista = lista[:]
     listaRan = []
     dicRan = {}
 
@@ -183,37 +193,41 @@ pidePalabra = [
 column1 = [
             [sg.T('Sustantivos', font = ('Arial', 12), key = 'tituloSustantivos')],
             [sg.Button('Agregar sustantivo', key = 'agregarSustantivo')],
-            [sg.Listbox(values = datos['sustantivos'], size=(15, 6), key = 'listboxSustantivos'), sg.T('Cantidad: '), sg.Spin(values = list(map(lambda x: x + 1, (range(len(datos['sustantivos']))))), key = 'spinSustantivos', initial_value = '0')],
+            [sg.Listbox(values = datos['sustantivos'], size=(15, 6), key = 'listboxSustantivos'), sg.T('Cantidad: '),
+            sg.Spin(values = listaNula + list(map(lambda x: x + 1, (range(len(datos['sustantivos']))))), key = 'spinSustantivos', initial_value = datos['cantSustantivos'])],
             [sg.Button('Eliminar sustantivo', key = 'eliminarSustantivo')],
             [sg.T('-----------------------')],
-            [sg.ColorChooserButton('Seleccionar color', key = 'colorSustantivos'), sg.B('Cargar color', key = 'cargarColorSustantivos')],
-            [sg.T('-----------------------')],
             [sg.B('Cargar cantidad', key = 'cantSustantivos')],
-            [sg.T('Cargado!', visible = False, key = 'cargadoSustantivos')]
+            [sg.T('Cargado!', visible = False, key = 'cargadoSustantivos')],
+            [sg.T('-----------------------')],
+            [sg.ColorChooserButton('Seleccionar color', key = 'colorSustantivos'), sg.B('Cargar color', key = 'cargarColorSustantivos')]
         ]
 
 column2 = [
             [sg.T('Adjetivos', font = ('Arial', 12), key = 'tituloAdjetivos')],
             [sg.Button('Agregar adjetivos', key = 'agregarAdjetivo')],
-            [sg.Listbox(values = datos['adjetivos'], size=(15, 6), key = 'listboxAdjetivos'), sg.T('Cantidad: '), sg.Spin(values = list(map(lambda x: x + 1, (range(len(datos['adjetivos']))))), key = 'spinAdjetivos', initial_value = '0')],
+            [sg.Listbox(values = datos['adjetivos'], size=(15, 6), key = 'listboxAdjetivos'), sg.T('Cantidad: '),
+            sg.Spin(values = listaNula + list(map(lambda x: x + 1, (range(len(datos['adjetivos']))))), key = 'spinAdjetivos', initial_value = datos['cantAdjetivos'])],
             [sg.Button('Eliminar adjetivos', key = 'eliminarAdjetivo')],
             [sg.T('-----------------------')],
-            [sg.ColorChooserButton('Seleccionar color', key = 'colorAdjetivos'), sg.B('Cargar color', key = 'cargarColorAdjetivos')],
-            [sg.T('-----------------------')],
             [sg.B('Cargar cantidad', key = 'cantAdjetivos')],
-            [sg.T('Cargado!', visible = False, key = 'cargadoAdjetivos')]
+            [sg.T('Cargado!', visible = False, key = 'cargadoAdjetivos')],
+            [sg.T('-----------------------')],
+            [sg.ColorChooserButton('Seleccionar color', key = 'colorAdjetivos'), sg.B('Cargar color', key = 'cargarColorAdjetivos')]
+
         ]
 
 column3 = [
             [sg.T('Verbos', font = ('Arial', 12), key = 'tituloVerbos')],
             [sg.Button('Agregar verbos', key = 'agregarVerbo')],
-            [sg.Listbox(values = datos['verbos'], size=(15, 6), key = 'listboxVerbos'), sg.T('Cantidad: '), sg.Spin(values = list(map(lambda x: x + 1, (range(len(datos['verbos']))))), key = 'spinVerbos', initial_value = '0')],
+            [sg.Listbox(values = datos['verbos'], size=(15, 6), key = 'listboxVerbos'), sg.T('Cantidad: '),
+            sg.Spin(values = listaNula + list(map(lambda x: x + 1, (range(len(datos['verbos']))))), key = 'spinVerbos', initial_value = datos['cantVerbos'])],
             [sg.Button('Eliminar verbos', key = 'eliminarVerbo')],
             [sg.T('-----------------------')],
-            [sg.ColorChooserButton('Seleccionar color', key = 'colorVerbos'), sg.B('Cargar color', key = 'cargarColorVerbos')],
-            [sg.T('-----------------------')],
             [sg.B('Cargar cantidad', key = 'cantVerbos')],
-            [sg.T('Cargado!', visible = False, key = 'cargadoVerbos')]
+            [sg.T('Cargado!', visible = False, key = 'cargadoVerbos')],
+            [sg.T('-----------------------')],
+            [sg.ColorChooserButton('Seleccionar color', key = 'colorVerbos'), sg.B('Cargar color', key = 'cargarColorVerbos')]
         ]
 
 columnaTipografia = [
@@ -319,22 +333,22 @@ while True:
             window.FindElement('cargadoAdjetivos').Update(visible = False)
             window.FindElement('cargadoVerbos').Update(visible = False)
         else:
-            sg.Popup('Cambios guardados!')
+            #Elijo sustantivos, adjetivos y verbos
+            datos['sustantivosElegidos'], datos['definicionSustantivos'] = filtrarSegunCantidad(datos['sustantivos'], datos['definicionTodosSustantivos'], datos['cantSustantivos'])
+            datos['adjetivosElegidos'], datos['definicionAdjetivos'] = filtrarSegunCantidad(datos['adjetivos'], datos['definicionTodosAdjetivos'], datos['cantAdjetivos'])
+            datos['verbosElegidos'], datos['definicionVerbos'] = filtrarSegunCantidad(datos['verbos'], datos['definicionTodosVerbos'], datos['cantVerbos'])
+
+            #Creo el path
+            path = os.path.join(os.getcwd(), 'Archivos')
+            path = os.path.join(path, 'datosConfig.json')
+
+            #Escribo el json
+            archivo = open(path, 'w')
+            json.dump(datos, archivo, indent = 4)
+            archivo.close()
+            sg.Popup('Cambios guardados!', title = 'Aviso')
             break
 
     else:
-        sg.Popup('Cambios guardados!')
+        sg.Popup('No se guardaron los cambios!', title = 'Advertencia')
         break
-
-#Elijo sustantivos, adjetivos y verbos random
-datos['sustantivosElegidos'], datos['definicionSustantivos'] = filtrarSegunCantidad(datos['sustantivos'], datos['definicionSustantivos'], datos['cantSustantivos'])
-datos['adjetivosElegidos'], datos['definicionAdjetivos'] = filtrarSegunCantidad(datos['adjetivos'], datos['definicionAdjetivos'], datos['cantAdjetivos'])
-datos['verbosElegidos'], datos['definicionVerbos'] = filtrarSegunCantidad(datos['verbos'], datos['definicionVerbos'], datos['cantVerbos'])
-
-#Creo el path
-path = os.path.join(os.getcwd(), 'Archivos')
-path = os.path.join(path, 'datosConfig.json')
-
-#Escribo el json
-archivo = open(path, 'w')
-json.dump(datos, archivo, indent = 4)
