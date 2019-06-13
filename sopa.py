@@ -2,14 +2,6 @@ import json
 from os import getcwd
 from os.path import join
 
-try: #EXCEPCION POR SI NO SE GENERO NINGUN ARCHIVO DE CONFIGURACION
-    archivo = join(join(getcwd(),'Archivos'),'datosConfig.json')#LA RUTA DEL ARCHIVO
-    config = open(archivo, 'r', encoding="utf8") #ABRE EL ARCHIVO EN MODO LECTURA
-    data = json.load(config) #LEE LOS DATOS Y LOS GUARDA EN DATA
-    Defecto = False #VARIABLE PARA SABER SI USAR VALORES POR DEFECTO O NO
-except FileNotFoundError:
-    Defecto = True #VARIABLE PARA SABER SI USAR VALORES POR DEFECTO O NO
-
 def SopaDeLetras(sustantivos=['PROFESOR','CASA'],verbos=['CORRER','LLOVER'],adjetivos=['GORDO','FEO'],orientacion='Horizontal',
 Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayusculas',ayuda=False):
     import PySimpleGUI as sg
@@ -21,6 +13,13 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
 
     InfoMax = PalabraMasLarga(sustantivos,verbos,adjetivos) #DEVUELVE UNA LISTA CON EL NUMERO DE LA PALABRA MAS LARGA Y LA CANTIDAD DE PALABRAS
     Palabras = {Csus: sustantivos,Cver: verbos,Cadj: adjetivos} #JUNTO TODAS LAS PALABRAS EN ESTE DICCIONARIO SEPARADAS SEGUN SU COLOR
+    # PONE LAS PALABRAS EN MINUSCULAS O MAYUSCULAS SEGUN CORRESPONDA
+    for i in Palabras:
+        if (mayus == 'Mayusculas'):
+            lista = list(map(lambda x : x.upper(),Palabras[i]))
+        else:
+            lista = list(map(lambda x : x.lower(),Palabras[i]))
+        Palabras[i] = lista
     cantPalabras = [] #GUARDA LA CANTIDAD DE PALABRAS SEGUN TIPO, 0=SUSTANTIVOS, 1=VERBOS, 2=ADJETIVOS
     for i in Palabras:
         cantPalabras.append(len(Palabras[i]))
@@ -130,16 +129,16 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
                     if (str(posX)+str(posY) in letrasPresionadas): #SI ESA COORDENADA QUE SE PRESIONO YA FUE PRESIONADA ANTES
                         graph.DrawRectangle((x1,y1), (x2,y2), fill_color='white', line_color='black') #DIBUJA OTRA VEZ EL RECTANGULO BLANCO
                         letrasPresionadas.remove(str(posX)+str(posY)) #BORRA LA LETRA PRESIONADA
-                        ok = list(filter(lambda x : (posX,posY) == x,letrasSeleccionadas.keys()))
+                        ok = list(filter(lambda x : (posX,posY) == x,letrasSeleccionadas.keys())) #GUARDA LA LETRA QUE PERTENECE AL DE UNA PALABRA
                         if (ok != []):
-                            letrasSeleccionadas[(posX,posY)][1] = False
+                            letrasSeleccionadas[(posX,posY)][1] = False #PONE EN FALSE LA LETRA SELECCIONADA QUE PERTENECE A UNA PALABRA VALIDA
                     else:
                         try:
                             graph.DrawRectangle((x1,y1), (x2,y2), fill_color=ColorSelect, line_color='black') #SI NO FUE PRESIONADA DIBUJA SEGUN EL COLOR SELECCIONADO
-                            letrasPresionadas.add(str(posX)+str(posY)) #AGREGA LA COORDENADA COMO PRESIONADA
-                            ok = list(filter(lambda x : (posX,posY) == x and ColorSelect == letrasSeleccionadas[x][2],letrasSeleccionadas.keys()))
+                            letrasPresionadas.add(str(posX)+str(posY)) #AGREGA LA COORDENADA PRESIONADA
+                            ok = list(filter(lambda x : (posX,posY) == x and ColorSelect == letrasSeleccionadas[x][2],letrasSeleccionadas.keys())) #GUARDA LA LETRA QUE PERTENECE AL DE UNA PALABRA
                             if (ok != []):
-                                letrasSeleccionadas[(posX,posY)][1] = True
+                                letrasSeleccionadas[(posX,posY)][1] = True #PONE EN TRUE LA LETRA SELECCIONADA QUE PERTENECE A UNA PALABRA VALIDA
                         except NameError:
                             sg.Popup('Elegi un color antes de empezar a jugar',title='ERROR')
                     graph.DrawText('{}'.format(letras[str(x1)+str(y1)+str(x2)+str(y2)]),(x2+25,y2+25),font=tipografia) #ESCRIBE LA LETRA QUE PETERNECIA A ESA COORDENADA
@@ -149,11 +148,14 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
             palabrasAcertadas = []
             palabrasErradas = []
             aux = list(map(lambda x : x.copy(),posicion)) #UNA COPIA DE LA LISTA ORIGINAL, ESTA SE VA A MODIFICAR
+            letrasErradas = letrasPresionadas.copy() #UNA COPIA DEL CONJUNTO CON LAS COORDENADAS CONCATENADAS DE LAS LETRAS PRESIONADAS
             for i in aux: #ITERO POR CADA SUBLISTA DE AUX
                 ok = True
                 for j in range(len(i[0])): #ITERO LA CANTIDAD DE VECES SEGUN LA LONGITUD DE LA PALABRA
                     if (letrasSeleccionadas[(i[1],i[2])][1] == False): #ME FIJO SI EN ESA POSICION NO SE HIZO CLICK
                         ok = False
+                    else:
+                        letrasErradas.remove(str(i[1])+str(i[2])) #BORRA EN LA ESTRUCTURA LA COORDENADA QUE PERTENECE A UNA PALABRA SELECCIONADA
                     if (orientacion == 'Horizontal'): #SI ES HORIZONTAL, SUMO SU VALOR DE X PARA AVANZAR Y FIJARME LA POSICION DE SU SIGUIENTE LETRA
                         i[2] = i[2]+1
                     else: #SI ES VERTICAL, SUMO SU VALOR DE Y PARA AVANZAR Y FIJARME LA POSICION DE SU SIGUIENTE LETRA
@@ -162,16 +164,33 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
                     palabrasAcertadas.append(i[0]) #AGREGO LA PALABRA SI ESTAN TODOS SUS CARACTERES SELECCIONADOS
                 else:
                     palabrasErradas.append(i[0]) #AGREGO LA PALABRA SI NO ESTAN TODOS SUS CARACTERES SELECCIONADOS
-            if (palabrasErradas != []): #SI LA LISTA DE PALABRAS ERRADAS TIENE ALGO, LA SOPA NO SE COMPLETO
-                string = ""
-                for i in palabrasErradas:
-                    string += i+"  "
-                sg.Popup('La sopa no se completo correctamente','Faltan marcar correctamente las palabras: ',string,title='INCORRECTO')
-            else:
+            if (palabrasErradas == []) and (letrasErradas == set()): #SI LA LISTA DE PALABRAS ERRADAS TIENE ALGO, LA SOPA NO SE COMPLETO
                 sg.Popup('La sopa se completo correctamente',title='FELICIDADES')
+            elif (palabrasErradas == []):
+                cantidad = len(letrasErradas)
+                sg.Popup('Las palabras fueron marcadas correctamente, pero hay marcadas '+str(cantidad)+' letras de mas',title='INCORRECTO')
+            elif (letrasErradas == set()):
+                cantidad = len(palabrasErradas)
+                sg.Popup('La sopa no se completo correctamente','Faltan marcar correctamente: '+str(cantidad)+' palabras',title='INCORRECTO')
+            else:
+                cantidadPalabras = len(palabrasErradas)
+                cantidadLetras = len(letrasErradas)
+                sg.Popup('La sopa no se completo correctamente','Faltan marcar correctamente: '+str(cantidadPalabras)+' palabras',
+                'Hay marcadas '+str(cantidadLetras)+' letras de mas',title="INCORRECTO")
 
-if (Defecto):
-    SopaDeLetras()
-else:
+
+try: #EXCEPCION POR SI NO SE GENERO NINGUN ARCHIVO DE CONFIGURACION
+    archivo = join(join(getcwd(),'Archivos'),'datosConfig.json')#LA RUTA DEL ARCHIVO
+    config = open(archivo, 'r', encoding="utf8") #ABRE EL ARCHIVO EN MODO LECTURA
+    data = json.load(config) #LEE LOS DATOS Y LOS GUARDA EN DATA
     SopaDeLetras(orientacion=data['orientacion'],tipografia=data['tipografia'],mayus=data['mayus'],Csus=data['colorSustantivos'],Cadj=data['colorAdjetivos'],
     Cver=data['colorVerbos'],sustantivos=data['sustantivosElegidos'],verbos=data['verbosElegidos'],adjetivos=data['adjetivosElegidos'])
+    config.close() #CIERRO EL ARCHIVO
+except FileNotFoundError:
+    SopaDeLetras() #SOPA POR DEFECTO
+
+#if (Defecto):
+#    SopaDeLetras()
+#else:
+#    SopaDeLetras(orientacion=data['orientacion'],tipografia=data['tipografia'],mayus=data['mayus'],Csus=data['colorSustantivos'],Cadj=data['colorAdjetivos'],
+#    Cver=data['colorVerbos'],sustantivos=data['sustantivosElegidos'],verbos=data['verbosElegidos'],adjetivos=data['adjetivosElegidos'])
