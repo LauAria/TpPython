@@ -1,7 +1,7 @@
 {
     "orientacion": "Horizontal",
-    "tipografia": "Arial",
-    "mayus": "Mayusculas",
+    "tipografia": "Helvetica",
+    "mayus": "May\u00fasculas",
     "cantSustantivos": "0",
     "cantAdjetivos": "3",
     "cantVerbos": "0",
@@ -41,15 +41,16 @@
     "definicionSustantivos": {},
     "definicionAdjetivos": {
         "lento": "1Que obra, sucede o se hace con velocidad reducida.\n* Sin\u00f3nimos: pausado, reposado, tardo, tranquilo.\n* Ejemplo:\n\n\u00abEntre estos dos extremos, de reacciones extremadamente r\u00e1pidas y de reacciones extremadamente lentas, hay reacciones con todas las velocidades intermedias imaginables\u00bb [1]\n\n2Torpe, poco \u00e1gil, f\u00edsica o mentalmente.\n* Ejemplo: Ese alumno es un poco lento y hay que dedicarle m\u00e1s atenci\u00f3n.\n\n3 Medicina.De textura glutinosa o pegajosa.\n\n4Se dec\u00eda de los tallos de \u00e1rboles o plantas que eran flexibles, d\u00factiles o f\u00e1ciles de doblar sin quebrarse.\n* Uso: anticuado.\n* Sin\u00f3nimo: correoso.\n* Relacionados: enllentecer, lentecer, lentura.",
-        "r\u00e1pido": "1Que se mueve a gran velocidad o rapidez.2Que se forma, crea, manufactura o procesa en poco tiempo.",
-        "fea": "1Forma del femenino de feo."
+        "fea": "1Forma del femenino de feo.",
+        "r\u00e1pido": "1Que se mueve a gran velocidad o rapidez.2Que se forma, crea, manufactura o procesa en poco tiempo."
     },
     "definicionVerbos": {},
     "sustantivosElegidos": [],
     "adjetivosElegidos": [
         "lento",
-        "r\u00e1pido",
-        "fea"
+        "fea",
+        "r\u00e1pido"
     ],
-    "verbosElegidos": []
+    "verbosElegidos": [],
+    "ayuda": "Sin ayuda"
 }

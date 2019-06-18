@@ -33,6 +33,7 @@ except:
     datos['definicionSustantivos'] = {}
     datos['definicionAdjetivos'] = {}
     datos['definicionVerbos'] = {}
+    datos['ayuda'] = 'Sin ayuda'
 
 listaNula = ['0']
 tipografias = ['Garamond', 'Helvetica', 'Courier', 'Fixedsys', 'Times', 'Verdana']
@@ -50,27 +51,39 @@ def abrirVentanaTipografia(window):
     while True:
         buttonT, valuesT = windowTipografia.Read()
 
-        if(buttonT == 'mayus'):
-            windowTipografia.FindElement('textoPrueba').Update('Texto de muestra'.upper())
-            datos['mayus'] = 'Mayusculas'
+        #Cargo los datos efectivamente
+        if (buttonT == 'guardarTipografia'):
+            datos['mayus'] = valuesT['inputmayus']
+            datos['orientacion'] = valuesT['inputorientacion']
+            datos['tipografia'] = valuesT['inputtipografias']
+            datos['ayuda'] = valuesT['inputayuda']
+            break
 
-        elif(buttonT == 'minus'):
-            windowTipografia.FindElement('textoPrueba').Update('Texto de muestra'.lower())
-            datos['mayus'] = 'Minusculas'
+        #Botones para actualizar interfaz
+        elif (buttonT == 'cargarMayus'):
+            if (valuesT['inputmayus'] == 'Mayúsculas'):
+                windowTipografia.FindElement('textoPrueba').Update('Texto de muestra'.upper())
+            else:
+                windowTipografia.FindElement('textoPrueba').Update('Texto de muestra'.lower())
 
-        elif(buttonT == 'Bhorizontal'):
-            windowTipografia.FindElement('orientacionActual').Update('Orientación actual: Horizontal')
-            datos['orientacion'] = 'Horizontal'
-
-        elif(buttonT == 'Bvertical'):
-            windowTipografia.FindElement('orientacionActual').Update('Orientación actual: Vertical')
-            datos['orientacion'] = 'Vertical'
+        elif (buttonT == 'cargarOrientacion'):
+            if (valuesT['inputorientacion'] == 'Horizontal'):
+                windowTipografia.FindElement('orientacionActual').Update('Orientación actual: Horizontal')
+            else:
+                windowTipografia.FindElement('orientacionActual').Update('Orientación actual: Vertical')
 
         elif(buttonT == 'cargarTipo'):
-            datos['tipografia'] = valuesT['InputComboTipografias']
-            windowTipografia.FindElement('textoPrueba').Update(font = (datos['tipografia'], 18))
+            windowTipografia.FindElement('textoPrueba').Update(font = (valuesT['inputtipografias'], 18))
 
+        elif(buttonT == 'cargarAyuda'):
+            if (valuesT['inputayuda'] == 'Sin ayuda'):
+                windowTipografia.FindElement('textoAyuda').Update('Ayuda actual: Sin ayuda')
+            elif(valuesT['inputayuda'] == 'Mostrar definiciones'):
+                windowTipografia.FindElement('textoAyuda').Update('Ayuda actual: Mostrar definiciones')
+            else:
+                windowTipografia.FindElement('textoAyuda').Update('Ayuda actual: Mostrar lista de palabras')
         else:
+            sg.Popup('No se han guardado los cambios!')
             break
 
     windowTipografia.Close()
@@ -230,30 +243,43 @@ column3 = [
             [sg.ColorChooserButton('Seleccionar color', key = 'colorVerbos'), sg.B('Cargar color', key = 'cargarColorVerbos')]
         ]
 
+columnaAyuda = [
+                    [sg.T('Ayuda actual: ' + datos['ayuda'], size = (30,1),key = 'textoAyuda')],
+                    [sg.InputCombo(['Sin ayuda', 'Mostrar definiciones', 'Mostrar lista de palabras'],
+                    default_value = 'Sin ayuda', readonly=True, size = (17, 1), key = 'inputayuda'),
+                    sg.B('Cargar', key = 'cargarAyuda')],
+               ]
+
 columnaTipografia = [
-                        [sg.InputCombo(values = tipografias, default_value='Helvetica',size=(20, 1), readonly=True, key = 'InputComboTipografias'), sg.B('Cargar', key = 'cargarTipo')]
+                        [sg.InputCombo(values = tipografias, default_value='Helvetica',size=(20, 1), readonly=True, key = 'inputtipografias'),
+                        sg.B('Cargar', key = 'cargarTipo')]
                     ]
 
 
 columnaMayus = [
-                    [sg.B('Mayúsculas', key = 'mayus')],
-                    [sg.B('Minúsculas', key = 'minus')],
+                    [sg.InputCombo(['Mayúsculas', 'Minúsculas'], default_value = 'Mayúsculas', readonly=True, key = 'inputmayus'),
+                    sg.B('Cargar', key = 'cargarMayus')]
                ]
 
 
 columnaOrientacion = [
-                        [sg.B('Horizontal', key = 'Bhorizontal')],
-                        [sg.B('Vertical', key = 'Bvertical')],
-                        [sg.T('Orientación actual: Horizontal', key = 'orientacionActual')]
+                        [sg.T('Orientación actual: ' + datos['orientacion'], key = 'orientacionActual')],
+                        [sg.InputCombo(['Horizontal', 'Vertical'], default_value = 'Horizontal', readonly=True, key = 'inputorientacion'),
+                        sg.B('Cargar', key = 'cargarOrientacion')]
                      ]
 
 
 layoutTipografia = [
                         [sg.T('Tipografia, orientación y mayus', font = ('Arial', 20))],
-                        [sg.Column(columnaTipografia, key = 'columnaTipografia'), sg.Column(columnaMayus, key = 'columnaMayus'),
-                        sg.Column(columnaOrientacion, key = 'columnaOrientacion')],
-                        [sg.T('TEXTO DE MUESTRA', font = ('Arial', 18), key = 'textoPrueba')],
-                        [sg.B('Listo', font = ('Arial', 13))]
+                        [sg.T('')],
+                        [sg.Column(columnaOrientacion, key = 'columnaOrientacion'),
+                        sg.Column(columnaAyuda, key = 'columnaayuda')],
+                        [sg.T('')],
+                        [sg.Column(columnaMayus, key = 'columnaMayus'),
+                        sg.Column(columnaTipografia, key = 'columnaTipografia')],
+                        [sg.T('TEXTO DE MUESTRA', justification = 'center', font = ('Arial', 18), key = 'textoPrueba')],
+                        [sg.T('')],
+                        [sg.B('Guardar datos', font = ('Arial', 13), key = 'guardarTipografia')]
                    ]
 
 layoutPrincipal = [
@@ -261,7 +287,7 @@ layoutPrincipal = [
                      [sg.Column(column1, key = 'columnaSustantivos'), sg.Column(column2, key = 'columnaAdjetivos'),
                       sg.Column(column3, key = 'columnaVerbos')],
                      [sg.T('-------------------------------------------')],
-                     [sg.B('Configurar formato y orientación', key = 'config')],
+                     [sg.B('Configurar formato, ayuda y orientación', key = 'config')],
                      [sg.B('Guardar configuración', key = 'guardar')]
                   ]
 
@@ -319,6 +345,8 @@ while True:
     #abrir ventaja de tipografia, mayus y minus y vertical o horizontal
     elif (button == 'config'):
         abrirVentanaTipografia(window)
+        #Desabilito el boton porque sino se bugea
+        window.FindElement('config').Update(disabled = True)
 
     #compruebo que la cantidad de palabras sea mayor a 3 y menor a 10, si cumple con esto cierro la ventana
     elif (button == 'guardar'):
