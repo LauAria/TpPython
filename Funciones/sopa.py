@@ -167,7 +167,7 @@ def SopaDeLetras(orientacion='',Csus='',Cver='',Cadj='',tipografia='',mayus='',a
                             if (ok != []):
                                 letrasSeleccionadas[(posX,posY)][1] = True #PONE EN TRUE LA LETRA SELECCIONADA QUE PERTENECE A UNA PALABRA VALIDA
                         except NameError:
-                            sg.Popup('Elegi un color antes de empezar a jugar',title='ERROR')
+                            sg.Popup('Elegí un color antes de empezar a jugar',title='ERROR')
                     graph.DrawText('{}'.format(letras[str(x1)+str(y1)+str(x2)+str(y2)]),(x2+25,y2+25),font=tipografia) #ESCRIBE LA LETRA QUE PETERNECIA A ESA COORDENADA
             except IndexError:
                 pass
@@ -192,15 +192,15 @@ def SopaDeLetras(orientacion='',Csus='',Cver='',Cadj='',tipografia='',mayus='',a
                 else:
                     palabrasErradas.append(i[0]) #AGREGO LA PALABRA SI NO ESTAN TODOS SUS CARACTERES SELECCIONADOS
             if (palabrasErradas == []) and (letrasErradas == set()): #SI LA LISTA DE PALABRAS ERRADAS TIENE ALGO, LA SOPA NO SE COMPLETO
-                sg.Popup('La sopa se completo correctamente',title='FELICIDADES')
+                sg.Popup('La sopa se completó correctamente',title='FELICIDADES')
             elif (palabrasErradas == []):
                 cantidad = len(letrasErradas)
-                sg.Popup('Las palabras fueron marcadas correctamente, pero hay marcadas '+str(cantidad)+' letras de mas',title='INCORRECTO')
+                sg.Popup('Las palabras fueron marcadas correctamente, pero hay marcadas '+str(cantidad)+' letras de más',title='INCORRECTO')
             elif (letrasErradas == set()):
                 cantidad = len(palabrasErradas)
-                sg.Popup('La sopa no se completo correctamente','Faltan marcar correctamente: '+str(cantidad)+' palabras',title='INCORRECTO')
+                sg.Popup('La sopa no se completó correctamente','Faltan marcar correctamente: '+str(cantidad)+' palabras',title='INCORRECTO')
             else:
                 cantidadPalabras = len(palabrasErradas)
                 cantidadLetras = len(letrasErradas)
-                sg.Popup('La sopa no se completo correctamente','Faltan marcar correctamente: '+str(cantidadPalabras)+' palabras',
-                'Hay marcadas '+str(cantidadLetras)+' letras de mas',title="INCORRECTO")
+                sg.Popup('La sopa no se completó correctamente','Faltan marcar correctamente: '+str(cantidadPalabras)+' palabras',
+                'Hay marcadas '+str(cantidadLetras)+' letras de más',title="INCORRECTO")
