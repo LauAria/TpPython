@@ -5,39 +5,36 @@ import os
 import sys
 from Funciones import buscador
 
-#Constantes
-#valores por defecto para el json (por si se cierra el programa sin completar los datos)
-try:
-    archivo = open (os.path.join(os.getcwd(),"Archivos","datosConfig.json"), "r")
-    datos = json.load(archivo)
-    archivo.close()
-except:
-    sg.Popup('No se pudo importar la configuración', title = 'Aviso')
-    datos = {}
-    datos['orientacion'] = 'Horizontal'
-    datos['tipografia'] = 'Arial'
-    datos['mayus'] = 'Mayusculas'
-    datos['cantSustantivos'] = 0
-    datos['cantAdjetivos'] = 0
-    datos['cantVerbos'] = 0
-    datos['colorSustantivos'] = '#00ff00'
-    datos['colorAdjetivos'] = '#0000ff'
-    datos['colorVerbos'] = '#ff0000'
-    datos['sustantivos'] = []
-    datos['adjetivos'] = []
-    datos['verbos'] = []
-    datos['definicionTodosSustantivos'] = {}
-    datos['definicionTodosAdjetivos'] = {}
-    datos['definicionTodosVerbos'] = {}
-    datos['definicionSustantivos'] = {}
-    datos['definicionAdjetivos'] = {}
-    datos['definicionVerbos'] = {}
-    datos['ayuda'] = 'Sin ayuda'
-
-listaNula = ['0']
-tipografias = ['Garamond', 'Helvetica', 'Courier', 'Fixedsys', 'Times', 'Verdana']
-
 #funciones
+def leerDatos():
+    global datos
+    try:
+        archivo = open (os.path.join(os.getcwd(),"Archivos","datosConfig.json"), "r")
+        datos = json.load(archivo)
+        archivo.close()
+    except:
+        #valores por defecto para el json (por si se cierra el programa sin completar los datos)
+        sg.Popup('No se pudo importar la configuración', title = 'Aviso')
+        datos = {}
+        datos['orientacion'] = 'Horizontal'
+        datos['tipografia'] = 'Arial'
+        datos['mayus'] = 'Mayusculas'
+        datos['cantSustantivos'] = 0
+        datos['cantAdjetivos'] = 0
+        datos['cantVerbos'] = 0
+        datos['colorSustantivos'] = '#00ff00'
+        datos['colorAdjetivos'] = '#0000ff'
+        datos['colorVerbos'] = '#ff0000'
+        datos['sustantivos'] = []
+        datos['adjetivos'] = []
+        datos['verbos'] = []
+        datos['definicionTodosSustantivos'] = {}
+        datos['definicionTodosAdjetivos'] = {}
+        datos['definicionTodosVerbos'] = {}
+        datos['definicionSustantivos'] = {}
+        datos['definicionAdjetivos'] = {}
+        datos['definicionVerbos'] = {}
+        datos['ayuda'] = 'Sin ayuda'
 
 def abrirVentanaTipografia(window):
     """funcion que esconde la ventana actual (pasada por parámetro), y abre la ventana que nos permite elegir
@@ -199,6 +196,13 @@ def pedirDefinicion(palabra):
         definicion = sg.PopupGetText('No se escribió una definición. Por favor ingrese una definicion de la palabra: ' + palabra, title = 'Ingreso de descripcion')
     definicion = definicion + ' (descripcion brindada por el profesor)'
     return definicion
+#Constantes
+
+datos = {}
+leerDatos()
+listaNula = ['0']
+tipografias = ['Garamond', 'Helvetica', 'Courier', 'Fixedsys', 'Times', 'Verdana']
+
 
 #layouts
 
@@ -297,7 +301,7 @@ layoutPrincipal = [
 
 
 
-window = sg.Window('Programa').Layout(layoutPrincipal)
+window = sg.Window('Configuración').Layout(layoutPrincipal)
 
 
 while True:
@@ -351,7 +355,6 @@ while True:
         abrirVentanaTipografia(window)
         #Desabilito el boton porque sino se bugea
         window.FindElement('config').Update(disabled = True)
-
 
     elif (button == 'guardar'):
         #compruebo que la cantidad de palabras sea mayor a 3 y menor a 10
