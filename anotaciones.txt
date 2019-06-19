@@ -1,1 +1,0 @@
-Preguntar si uso igual  el sg.Spin aunque para seleccionar 0 tenga que borrar todos los elementos

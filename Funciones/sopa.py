@@ -1,10 +1,11 @@
-import json
-from os import getcwd
-from os.path import join
 
-def SopaDeLetras(sustantivos=['PROFESOR','CASA'],verbos=['CORRER','LLOVER'],adjetivos=['GORDO','FEO'],orientacion='Horizontal',
-Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayusculas',ayuda=False):
+##################################################
+#####             SOPA DE LETRAS             #####
+##################################################
+
+def SopaDeLetras(orientacion='',Csus='',Cver='',Cadj='',tipografia='',mayus='',ayuda='',sustantivos=[],verbos=[],adjetivos=[],defSustantivos={},defVerbos={},defAdjetivos={}):
     import PySimpleGUI as sg
+    import random
     from Funciones.funcionesSopa import PalabraMasLarga,AcomodarPalabrasHorizontales,AcomodarPalabrasVerticales,dibujarSopaDeLetras
 
     ##########################################################################################################################################################################
@@ -44,29 +45,46 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
             lista[0] = lista[0]+50 #AUMENTA LA COORDENADA top_right
             aux = x
 
+    #### BOTON DE AYUDA HABILITADO O DESHABILITADO ####
+    if (ayuda == 'Sin ayuda'):
+        menuAyuda = sg.Submit('Ayuda',button_color=('black','white'),key='ayuda',size=(10,1),disabled=True)
+    else:
+        menuAyuda = sg.Submit('Ayuda',button_color=('black','white'),key='ayuda',size=(10,1))
+
+    #### CONFIGURAR STRINGS PARA MOSTRAR AYUDA ####
+    #Juntos los datos y los diccionarios y mezclo la lista para que las ayudas no sigan un patrón
+    listaTotal = sustantivos + adjetivos + verbos
+    random.shuffle(listaTotal)
+
+    dicTotal = dict(defSustantivos)
+    dicTotal.update(defVerbos)
+    dicTotal.update(defAdjetivos)
+
+
+    palabrasStr = '\n'.join(listaTotal)
+    definicionesStr = ''
+    for x in dicTotal.keys():
+        definicionesStr = definicionesStr + 'DEFINICION: \n\n'
+        definicionesStr = definicionesStr + dicTotal[x]
+        definicionesStr = definicionesStr + '\n--------------------------------\n'
+
     ##################################################
     #####                 INTERFAZ               #####
     ##################################################
 
     layout = [
-                [sg.Text('Cantidad de sustantivos: '+str(cantPalabras[0]),font=(tipografia, 11))],
-                [sg.Text('Cantidad de verbos: '+str(cantPalabras[1]),font=(tipografia, 11))],
+                [sg.Text('Palabras en: '+str(orientacion),font=(tipografia, 11),size=(25,1)),menuAyuda],
+                [sg.Text('_'  *int(sizeSopa/7))],
+                [sg.Text('Cantidad de sustantivos: '+str(cantPalabras[0]),font=(tipografia, 11)),sg.Text('Cantidad de verbos: '+str(cantPalabras[1]),font=(tipografia, 11))],
                 [sg.Text('Cantidad de adjetivos: '+str(cantPalabras[2]),font=(tipografia, 11))],
     			[sg.Graph(canvas_size=(sizeSopa, sizeSopa), graph_bottom_left=(0,0), graph_top_right=(sizeSopa, sizeSopa), background_color='white',
                 key='graph',enable_events=True,change_submits=False,drag_submits=False)],
                 [sg.Submit('Pintar sustantivos',button_color=('black',Csus),key='sus'),sg.Submit('Pintar verbos',button_color=('black',Cver),key='ver'),
                     sg.Submit('Pintar adjetivos',button_color=('black',Cadj),key='adj'),sg.Submit('Comprobar',button_color=('black','white'))],
-                [sg.Submit('Salir')]
+                [sg.Submit('Salir',button_color=('white','black'))]
              ]
 
-    #MenuAyuda = [
-    #                [sg.Submit('Definiciones',size=(20,2))],
-    #                [sg.Submit('Solo las palabras',size=(20,2))]
-    #            ]
-
     window = sg.Window('Sopa de letras', layout).Finalize()
-
-    #windowAyuda = sg.Window('Menu', MenuAyuda).Finalize()
 
     graph = window.FindElement('graph')
 
@@ -112,6 +130,15 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
         if (button == 'adj'):
             ColorSelect = Cadj
         ############################
+        ####       AYUDA       ####
+        if (button == 'ayuda'):
+            window.Hide()
+            if (ayuda == 'Mostrar definiciones'):
+                sg.PopupScrolled(definicionesStr, size=(100, 30), title='Definiciones')
+            else:
+                sg.PopupScrolled(palabrasStr, size=(20, 20), title='Lista de palabras')
+        window.UnHide()
+        ###########################
         if (button == 'graph'):
             try:
                 interacciones = interacciones+1
@@ -177,20 +204,3 @@ Csus='#2E64FE',Cver='#FE2E2E',Cadj='#01DF3A',tipografia='Calibri',mayus='Mayuscu
                 cantidadLetras = len(letrasErradas)
                 sg.Popup('La sopa no se completo correctamente','Faltan marcar correctamente: '+str(cantidadPalabras)+' palabras',
                 'Hay marcadas '+str(cantidadLetras)+' letras de mas',title="INCORRECTO")
-
-
-try: #EXCEPCION POR SI NO SE GENERO NINGUN ARCHIVO DE CONFIGURACION
-    archivo = join(join(getcwd(),'Archivos'),'datosConfig.json')#LA RUTA DEL ARCHIVO
-    config = open(archivo, 'r', encoding="utf8") #ABRE EL ARCHIVO EN MODO LECTURA
-    data = json.load(config) #LEE LOS DATOS Y LOS GUARDA EN DATA
-    SopaDeLetras(orientacion=data['orientacion'],tipografia=data['tipografia'],mayus=data['mayus'],Csus=data['colorSustantivos'],Cadj=data['colorAdjetivos'],
-    Cver=data['colorVerbos'],sustantivos=data['sustantivosElegidos'],verbos=data['verbosElegidos'],adjetivos=data['adjetivosElegidos'])
-    config.close() #CIERRO EL ARCHIVO
-except FileNotFoundError:
-    SopaDeLetras() #SOPA POR DEFECTO
-
-#if (Defecto):
-#    SopaDeLetras()
-#else:
-#    SopaDeLetras(orientacion=data['orientacion'],tipografia=data['tipografia'],mayus=data['mayus'],Csus=data['colorSustantivos'],Cadj=data['colorAdjetivos'],
-#    Cver=data['colorVerbos'],sustantivos=data['sustantivosElegidos'],verbos=data['verbosElegidos'],adjetivos=data['adjetivosElegidos'])

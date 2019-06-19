@@ -1,5 +1,5 @@
 {
-    "orientacion": "Horizontal",
+    "orientacion": "Vertical",
     "tipografia": "Helvetica",
     "mayus": "May\u00fasculas",
     "cantSustantivos": "0",
@@ -45,12 +45,18 @@
         "r\u00e1pido": "1Que se mueve a gran velocidad o rapidez.2Que se forma, crea, manufactura o procesa en poco tiempo."
     },
     "definicionVerbos": {},
-    "sustantivosElegidos": [],
+    "sustantivosElegidos": [
+	"pan",
+        "agua"
+    ],
     "adjetivosElegidos": [
         "lento",
         "fea",
         "r\u00e1pido"
     ],
-    "verbosElegidos": [],
-    "ayuda": "Sin ayuda"
+    "verbosElegidos": [
+	"juega",
+        "correr"
+    ],
+    "ayuda": "Mostrar definiciones"
 }
