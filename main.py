@@ -15,4 +15,6 @@ try: #EXCEPCION POR SI NO SE GENERO NINGUN ARCHIVO DE CONFIGURACION
     #----------------------------------------------------------------------------------------------------------------------------#
     config.close() #CIERRO EL ARCHIVO
 except FileNotFoundError:
-    sg.Popup('Configurar el juego antes de iniciar',title="ERROR")
+    sg.Popup('La configuración no existe','Configurar el juego antes de iniciar',title="ERROR")
+except KeyError:
+    sg.Popup('Cargar una configuración del juego antes de iniciar',title="ERROR")
