@@ -1,10 +1,9 @@
-#Funciones que pueden ser útiles para el manejo de ventanas window.Refresh(), windows(keep_on_top = True), window.Disable() window.Disappear(), Reappear() window.Hide(), UnHide()
-
 import PySimpleGUI as sg
-import buscador
+import json
 import random
 import os
-import json
+import sys
+from Funciones import buscador
 
 #Constantes
 #valores por defecto para el json (por si se cierra el programa sin completar los datos)
@@ -101,15 +100,20 @@ def cargarColor(tipo):
     colorElegido = values['color' + tipoCS]
     if(colorElegido != '' and colorElegido != 'None'):
         #saco algunos colores que son muy claros y no se llega a leer bien
-        if(colorElegido == '#ffffff' or colorElegido == '#c0c0c0' or colorElegido == '#ffff80' or colorElegido == '#ffff00' or colorElegido == '#80ffff' or colorElegido == '#00ffff'):
-            sg.Popup('El color elegido es muy claro y puede dificultar la legibilidad del texto, elija un color mas oscuro')
+        red = colorElegido[1:3]
+        green = colorElegido[3:5]
+        blue = colorElegido[5:7]
+        if(red >= str(80) and green >= str(80) and blue >= str(80)):
+            sg.Popup('El color elegido es muy claro y puede dificultar la legibilidad del texto, elija un color mas oscuro',  title = 'Aviso')
+        elif(red <= str(40) and green <= str(40) and blue <= str(40)):
+            sg.Popup('El color elegido es muy oscuro y puede dificultar la legibilidad del texto, elija un color mas claro', title = 'Aviso')
         else:
             global window
             window.FindElement('titulo' + tipoCS).Update(text_color = colorElegido)
             window.FindElement('cargarColor' + tipoCS).Update(button_color= ('white',colorElegido))
             datos['color' + tipoCS] = colorElegido
     else:
-        sg.Popup('Tiene que elegir un color antes.')
+        sg.Popup('Tiene que elegir un color antes.', title = 'Advertencia')
 
 def agregar(tipo):
     """funcion que agrega una palabra a la lista del tipo que le pasemos. Usa funciones de otro .py para
@@ -348,8 +352,9 @@ while True:
         #Desabilito el boton porque sino se bugea
         window.FindElement('config').Update(disabled = True)
 
-    #compruebo que la cantidad de palabras sea mayor a 3 y menor a 10, si cumple con esto cierro la ventana
+
     elif (button == 'guardar'):
+        #compruebo que la cantidad de palabras sea mayor a 3 y menor a 10
         if(int(datos['cantSustantivos']) + int(datos['cantAdjetivos']) + int(datos['cantVerbos']) > 10):
             sg.Popup('La cantidad de palabras seleccionadas es muy grande, disminuya la cantidad.', title = 'Advertencia')
             window.FindElement('cargadoSustantivos').Update(visible = False)
@@ -362,20 +367,22 @@ while True:
             window.FindElement('cargadoVerbos').Update(visible = False)
         else:
             #Elijo sustantivos, adjetivos y verbos
-            datos['sustantivosElegidos'], datos['definicionSustantivos'] = filtrarSegunCantidad(datos['sustantivos'], datos['definicionTodosSustantivos'], datos['cantSustantivos'])
-            datos['adjetivosElegidos'], datos['definicionAdjetivos'] = filtrarSegunCantidad(datos['adjetivos'], datos['definicionTodosAdjetivos'], datos['cantAdjetivos'])
-            datos['verbosElegidos'], datos['definicionVerbos'] = filtrarSegunCantidad(datos['verbos'], datos['definicionTodosVerbos'], datos['cantVerbos'])
+            try:
+                datos['sustantivosElegidos'], datos['definicionSustantivos'] = filtrarSegunCantidad(datos['sustantivos'], datos['definicionTodosSustantivos'], datos['cantSustantivos'])
+                datos['adjetivosElegidos'], datos['definicionAdjetivos'] = filtrarSegunCantidad(datos['adjetivos'], datos['definicionTodosAdjetivos'], datos['cantAdjetivos'])
+                datos['verbosElegidos'], datos['definicionVerbos'] = filtrarSegunCantidad(datos['verbos'], datos['definicionTodosVerbos'], datos['cantVerbos'])
+            except IndexError:
+                sg.Popup('La cantidad de palabras seleccionadas no coincide con la cantidad de palabras ingresadas!', title = 'ERROR')
+            else:
+                #Creo el path
+                path = os.path.join(os.getcwd(), 'Archivos',  'datosConfig.json')
 
-            #Creo el path
-            path = os.path.join(os.getcwd(), 'Archivos')
-            path = os.path.join(path, 'datosConfig.json')
-
-            #Escribo el json
-            archivo = open(path, 'w')
-            json.dump(datos, archivo, indent = 4)
-            archivo.close()
-            sg.Popup('Cambios guardados!', title = 'Aviso')
-            break
+                #Escribo el json
+                archivo = open(path, 'w')
+                json.dump(datos, archivo, indent = 4)
+                archivo.close()
+                sg.Popup('Cambios guardados!', title = 'Aviso')
+                break
 
     else:
         sg.Popup('No se guardaron los cambios!', title = 'Advertencia')
