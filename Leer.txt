@@ -1,0 +1,6 @@
+El programa consta de dos archivos principales, Configuracion.py, el cual sirve para setear la configuración de la sopa de letras
+(Elegir palabras, elegir cantidad de palabras, colores, fuente del texto, tipo de ayuda, orientación de la sopa, etc), y de main.py, que lleva a cabo la
+ejecución de la sopa.
+Tiene una carpeta llamada "Archivos", que es en donde se guarda el json con toda la configuración cargada. El json comienza con valores por
+defecto y sin palabras cargadas, y una vez completada la configuración, cargando por lo menos 3 palabras, ya se puede ejecutar la sopa de letras.
+También tiene otra carpeta que se llama "Funciones", en donde guardamos código que sirve para ejecutar los archivos principales.
