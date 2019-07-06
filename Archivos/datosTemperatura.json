@@ -1,5 +1,7 @@
 {
 
-  "oficina 1" : {'Temp': 14, 'Hum': 15}
+  "oficina 1" : {'Temp': 14, 'Humedad': 15, 'fecha': "Wed 01 May, 19"},
+  "oficina 2" : {'Temp': 25, 'Humedad': 40, 'fecha': "Fri 13 Apr, 19"},
+  "aula 1" : {'Temp': 20, 'Humedad': 23, 'fecha': "Tue 22 Aug, 19"}
 
 }

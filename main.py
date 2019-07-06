@@ -5,7 +5,8 @@ import PySimpleGUI as sg
 from Funciones.sopa import SopaDeLetras
 
 try: #EXCEPCION POR SI NO SE GENERO NINGUN ARCHIVO DE CONFIGURACION
-    archivo = join(join(getcwd(),'Archivos'),'datosConfig.json')#LA RUTA DEL ARCHIVO
+    archivo = join(getcwd(),'Archivos','datosConfig.json')#LA RUTA DEL ARCHIVO
+    print(archivo)
     config = open(archivo, 'r', encoding="utf8") #ABRE EL ARCHIVO EN MODO LECTURA
     data = json.load(config) #LEE LOS DATOS Y LOS GUARDA EN DATA
     #EJECUTA LA SOPA DE LETRAS CON LOS DATOS DEL JSON
