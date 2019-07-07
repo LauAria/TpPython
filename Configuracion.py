@@ -399,8 +399,6 @@ while True:
             else:
                 datos['LookAndFeel'] = 'red'
 
-            print(datos['LookAndFeel'])
-
             #Creo el path
             path = os.path.join(os.getcwd(), 'Archivos',  'datosConfig.json')
 
