@@ -52,14 +52,17 @@ from datetime import date
             funcion()"""
 
 ### MUESTRA LOS VALORES EN EL LED ###
-"""def mostrar(temp,hum):
+#def mostrar(temp,hum):
+    """Muestra los datos parados como parametros en dos matrices leds"""
     #matriz = Matriz(numero_matrices=2, ancho=16)
-    #matriz.mostrar_mensaje(str(temp)+str(hum), delay=0.3)"""
+    #matriz.mostrar_mensaje(str(temp) + ' ' + str(hum), delay=0.3)
 
-
-archivo = join(getcwd(),'Archivos','datosTemperatura.json')#LA RUTA DEL ARCHIVO
-datosJson = open(archivo, 'r', encoding="utf8") #ABRE EL ARCHIVO EN MODO LECTURA
-sensor = json.load(datosJson) #LEE LOS DATOS Y LOS GUARDA EN DATA
+try:
+    archivo = join(getcwd(),'Archivos','datosTemperatura.json')#LA RUTA DEL ARCHIVO
+    datosJson = open(archivo, 'r', encoding="utf8") #ABRE EL ARCHIVO EN MODO LECTURA
+    sensor = json.load(datosJson) #LEE LOS DATOS Y LOS GUARDA EN SENSOR
+except FileNotFoundError:
+    sensor = {}
 
 layout = [
             [sg.T('Seleccionar lugar: ')],
@@ -71,25 +74,32 @@ layout = [
 
 window = sg.Window('Temperatura y humedad').Layout(layout)
 
+#sonido = Sonido()
 while True:
     button, values = window.Read()
     if button is None or button == 'Salir':
         break
     if (button == 'actualizarLugar'):
-        datos = {}
+        try:
+            datos = {}
 
-        """ DETECTA EL VALOR DEL SENSOR """
-        #temp = Temperatura()
-        #datos = temp.datos_sensor()
+            """ DETECTA EL VALOR DEL SENSOR """
+            #temp = Temperatura()
+            #datos = temp.datos_sensor()
 
-        datos['temperatura'] = 50 #ESTE DATO NO SE CARGA A MANO
-        datos['humedad'] = 100 #ESTE DATO NO SE CARGA A MANO
-        datos['fecha'] = str(date.today())
-        sensor[values['inputCombo']] = datos #ACTUALIZA EL VALOR EN EL LUGAR CORRECTO
+            datos['temperatura'] = 50 #ESTE DATO NO SE CARGA A MANO
+            datos['humedad'] = 100 #ESTE DATO NO SE CARGA A MANO
+            datos['fecha'] = str(date.today())
+            sensor[values['inputCombo']] = datos #ACTUALIZA EL VALOR EN EL LUGAR CORRECTO
+        except KeyError:
+            sg.Popup('Seleccionar antes el lugar', title = 'Advertencia')
 
     """ DETECTA SONIDO Y LO MUESTRA EN EL LED CON LA FUNCION MOSTRAR """
-    #sonido = Sonido()
-    #sonido.evento_detectado(mostrar(sensor[values['inputCombo']]['temperatura'],sensor[values['inputCombo']]['humedad']))
+    try:
+        print() #borrar
+        #sonido.evento_detectado(mostrar(sensor[values['inputCombo']]['temperatura'],sensor[values['inputCombo']]['humedad']))
+    except KeyError:
+        sg.Popup('Seleccionar antes el lugar', title = 'Advertencia')
 
     ### ESTA PARTE CON EL SENSOR SE TIENE QUE BORRAR ###
     if (button == 'mostrarLugar'):
@@ -98,8 +108,13 @@ while True:
         window.FindElement('Thum').Update('Humedad: ' + str(sensor[values['inputCombo']]['humedad']))
 
 
+#Cierra la ventana y el archivo JSON
 window.Close()
+#Como no nos funcionó el modo lectura/escritura (r+)
+#decidimos cerrar el archivo de lectura y abrirlo de nuevo para escribirlo
 datosJson.close()
+
+#Vuelve a abrir el Json para guardar los cambios
 datosJson = open(archivo, 'w', encoding="utf8")
 json.dump(sensor,datosJson,indent=4)
 datosJson.close()
