@@ -37,7 +37,6 @@ def leerDatos():
         datos['definicionAdjetivos'] = {}
         datos['definicionVerbos'] = {}
         datos['ayuda'] = 'Sin ayuda'
-        #datos['lugar'] = ''
         datos['LookAndFeel'] = 'blue'
     #Lee los datos de los lugares con temperatura y humedad
     try:
