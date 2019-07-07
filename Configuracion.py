@@ -8,6 +8,8 @@ from Funciones import buscador
 #funciones
 def leerDatos():
     global datos
+    global datosTemp
+    #Lee la configuración anterior
     try:
         archivo = open (os.path.join(os.getcwd(),"Archivos","datosConfig.json"), "r")
         datos = json.load(archivo)
@@ -35,6 +37,15 @@ def leerDatos():
         datos['definicionAdjetivos'] = {}
         datos['definicionVerbos'] = {}
         datos['ayuda'] = 'Sin ayuda'
+        #datos['lugar'] = ''
+        datos['LookAndFeel'] = 'blue'
+    #Lee los datos de los lugares con temperatura y humedad
+    try:
+        archivo = open (os.path.join(os.getcwd(),"Archivos","datosTemperatura.json"), "r")
+        datosTemp = json.load(archivo)
+        archivo.close()
+    except:
+        datosTemp = {}
 
 def abrirVentanaTipografia(window):
     """funcion que esconde la ventana actual (pasada por parámetro), y abre la ventana que nos permite elegir
@@ -296,6 +307,9 @@ layoutPrincipal = [
                       sg.Column(column3, key = 'columnaVerbos')],
                      [sg.T('-------------------------------------------')],
                      [sg.B('Configurar formato, ayuda y orientación', key = 'config')],
+                     [sg.T('Seleccionar el lugar con el que ambientar la sopa: '),
+                     sg.InputCombo(list(datosTemp.keys()), readonly=True, key = 'inputlugares')],
+                     [sg.T('-------------------------------------------')],
                      [sg.B('Guardar configuración', key = 'guardar')]
                   ]
 
@@ -370,22 +384,32 @@ while True:
             window.FindElement('cargadoVerbos').Update(visible = False)
         else:
             #Elijo sustantivos, adjetivos y verbos
-            try:
-                datos['sustantivosElegidos'], datos['definicionSustantivos'] = filtrarSegunCantidad(datos['sustantivos'], datos['definicionTodosSustantivos'], datos['cantSustantivos'])
-                datos['adjetivosElegidos'], datos['definicionAdjetivos'] = filtrarSegunCantidad(datos['adjetivos'], datos['definicionTodosAdjetivos'], datos['cantAdjetivos'])
-                datos['verbosElegidos'], datos['definicionVerbos'] = filtrarSegunCantidad(datos['verbos'], datos['definicionTodosVerbos'], datos['cantVerbos'])
-            except IndexError:
-                sg.Popup('La cantidad de palabras seleccionadas no coincide con la cantidad de palabras ingresadas!', title = 'ERROR')
-            else:
-                #Creo el path
-                path = os.path.join(os.getcwd(), 'Archivos',  'datosConfig.json')
+            datos['sustantivosElegidos'], datos['definicionSustantivos'] = filtrarSegunCantidad(datos['sustantivos'], datos['definicionTodosSustantivos'], datos['cantSustantivos'])
+            datos['adjetivosElegidos'], datos['definicionAdjetivos'] = filtrarSegunCantidad(datos['adjetivos'], datos['definicionTodosAdjetivos'], datos['cantAdjetivos'])
+            datos['verbosElegidos'], datos['definicionVerbos'] = filtrarSegunCantidad(datos['verbos'], datos['definicionTodosVerbos'], datos['cantVerbos'])
 
-                #Escribo el json
-                archivo = open(path, 'w')
-                json.dump(datos, archivo, indent = 4)
-                archivo.close()
-                sg.Popup('Cambios guardados!', title = 'Aviso')
-                break
+            #Guardo el look and feel
+            temperatura = datosTemp[values['inputlugares']]['temperatura']
+            if(temperatura <= 15):
+                datos['LookAndFeel'] = 'blue'
+            elif(temperatura <= 20):
+                datos['LookAndFeel'] = 'yellow'
+            elif(temperatura <= 25):
+                datos['LookAndFeel'] = 'orange'
+            else:
+                datos['LookAndFeel'] = 'red'
+
+            print(datos['LookAndFeel'])
+
+            #Creo el path
+            path = os.path.join(os.getcwd(), 'Archivos',  'datosConfig.json')
+
+            #Escribo el json
+            archivo = open(path, 'w')
+            json.dump(datos, archivo, indent = 4)
+            archivo.close()
+            sg.Popup('Cambios guardados!', title = 'Aviso')
+            break
 
     else:
         sg.Popup('No se guardaron los cambios!', title = 'Advertencia')

@@ -1,16 +1,16 @@
 {
     "oficina 1": {
-        "temperatura": 50,
+        "temperatura": 10,
         "humedad": 100,
         "fecha": "2019-07-05"
     },
     "oficina 2": {
-        "temperatura": 50,
+        "temperatura": 20,
         "humedad": 100,
         "fecha": "2019-07-05"
     },
     "aula 1": {
-        "temperatura": 20,
+        "temperatura": 40,
         "humedad": 23,
         "fecha": "Tue 22 Aug, 19"
     }
