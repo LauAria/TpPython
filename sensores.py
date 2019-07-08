@@ -53,7 +53,7 @@ from datetime import date
 
 ### MUESTRA LOS VALORES EN EL LED ###
 #def mostrar(temp,hum):
-    """Muestra los datos parados como parametros en dos matrices leds"""
+"""Muestra los datos parados como parametros en dos matrices leds"""
     #matriz = Matriz(numero_matrices=2, ancho=16)
     #matriz.mostrar_mensaje(str(temp) + ' ' + str(hum), delay=0.3)
 

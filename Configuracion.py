@@ -37,7 +37,7 @@ def leerDatos():
         datos['definicionAdjetivos'] = {}
         datos['definicionVerbos'] = {}
         datos['ayuda'] = 'Sin ayuda'
-        datos['LookAndFeel'] = 'blue'
+        datos['LookAndFeel'] = 'BlueMono'
     #Lee los datos de los lugares con temperatura y humedad
     try:
         archivo = open (os.path.join(os.getcwd(),"Archivos","datosTemperatura.json"), "r")
@@ -388,15 +388,16 @@ while True:
             datos['verbosElegidos'], datos['definicionVerbos'] = filtrarSegunCantidad(datos['verbos'], datos['definicionTodosVerbos'], datos['cantVerbos'])
 
             #Guardo el look and feel
-            temperatura = datosTemp[values['inputlugares']]['temperatura']
-            if(temperatura <= 15):
-                datos['LookAndFeel'] = 'blue'
-            elif(temperatura <= 20):
-                datos['LookAndFeel'] = 'yellow'
-            elif(temperatura <= 25):
-                datos['LookAndFeel'] = 'orange'
-            else:
-                datos['LookAndFeel'] = 'red'
+            try:
+                temperatura = datosTemp[values['inputlugares']]['temperatura']
+                if(temperatura <= 15):
+                    datos['LookAndFeel'] = 'BlueMono'
+                elif(temperatura <= 25):
+                    datos['LookAndFeel'] = 'Kayak'
+                else:
+                    datos['LookAndFeel'] = 'SandyBeach'
+            except:
+                datos['LookAndFeel'] = 'BlueMono'
 
             #Creo el path
             path = os.path.join(os.getcwd(), 'Archivos',  'datosConfig.json')
