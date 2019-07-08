@@ -4,6 +4,7 @@
 ###########################################################################################################
 
 def PalabraMasLarga(sus,verbos,adjetivos):
+      """DEVUELVE UNA LISTA CON LA CANTIDAD DE LETRAS DE LA PALABRA MAS LARGA Y LA CANTIDAD TOTAL DE PALABRAS"""
       info = [-1,0]
       for x in sus:
           info[1] = info[1]+1
@@ -26,6 +27,7 @@ def PalabraMasLarga(sus,verbos,adjetivos):
 #############################################################################################################
 
 def AcomodarPalabrasHorizontales(posicion,repetidas,Palabras,tamañoDeSopa):
+    """ARMA LA LISTA 'POSICION' CON LA POSICION INCIAL EN LA MATRIZ DE CADA PALABRA PARA LA ORIENTACION HORIZONTAL"""
     import random
     aux = []
     for i in Palabras:
@@ -68,6 +70,7 @@ def AcomodarPalabrasHorizontales(posicion,repetidas,Palabras,tamañoDeSopa):
 ##############################################################################################################
 
 def AcomodarPalabrasVerticales(posicion,repetidas,Palabras,tamañoDeSopa):
+    """ARMA LA LISTA 'POSICION' CON LA POSICION INCIAL EN LA MATRIZ DE CADA PALABRA PARA LA ORIENTACION VERTICAL"""
     import random
     aux = []
     for i in Palabras:
@@ -110,6 +113,7 @@ def AcomodarPalabrasVerticales(posicion,repetidas,Palabras,tamañoDeSopa):
 ###############################################################################################################
 
 def dibujarSopaDeLetras(tamañoDeSopa,mayus,graph,tipografia,orientacion,posicion,letras,letrasSeleccionadas,diccionarioCoordenadas):
+    """DIBUJA LA SOPA DE LETRAS EN EL GRAPH"""
     import random
     import string
     cont = 0

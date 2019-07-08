@@ -11,7 +11,8 @@ try: #EXCEPCION POR SI NO SE GENERO NINGUN ARCHIVO DE CONFIGURACION
     #EJECUTA LA SOPA DE LETRAS CON LOS DATOS DEL JSON
     SopaDeLetras(orientacion=data['orientacion'],tipografia=data['tipografia'],mayus=data['mayus'],Csus=data['colorSustantivos'],
     Cadj=data['colorAdjetivos'],Cver=data['colorVerbos'],sustantivos=data['sustantivosElegidos'],verbos=data['verbosElegidos'],
-    adjetivos=data['adjetivosElegidos'],ayuda=data['ayuda'],defSustantivos=data['definicionSustantivos'],defVerbos=data['definicionVerbos'],defAdjetivos=data['definicionAdjetivos'])
+    adjetivos=data['adjetivosElegidos'],ayuda=data['ayuda'],defSustantivos=data['definicionSustantivos'],defVerbos=data['definicionVerbos'],
+    defAdjetivos=data['definicionAdjetivos'],LookAndFeel=data['LookAndFeel'])
     #----------------------------------------------------------------------------------------------------------------------------#
     config.close() #CIERRO EL ARCHIVO
 except FileNotFoundError:

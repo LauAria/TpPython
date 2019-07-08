@@ -3,7 +3,7 @@
 #####             SOPA DE LETRAS             #####
 ##################################################
 
-def SopaDeLetras(orientacion='',Csus='',Cver='',Cadj='',tipografia='',mayus='',ayuda='',sustantivos=[],verbos=[],adjetivos=[],defSustantivos={},defVerbos={},defAdjetivos={}):
+def SopaDeLetras(orientacion='',Csus='',Cver='',Cadj='',tipografia='',mayus='',ayuda='',sustantivos=[],verbos=[],adjetivos=[],defSustantivos={},defVerbos={},defAdjetivos={},LookAndFeel=''):
     import PySimpleGUI as sg
     import random
     from Funciones.funcionesSopa import PalabraMasLarga,AcomodarPalabrasHorizontales,AcomodarPalabrasVerticales,dibujarSopaDeLetras
@@ -72,6 +72,7 @@ def SopaDeLetras(orientacion='',Csus='',Cver='',Cadj='',tipografia='',mayus='',a
     #####                 INTERFAZ               #####
     ##################################################
 
+    sg.ChangeLookAndFeel(LookAndFeel)
     layout = [
                 [sg.Text('Palabras en: '+str(orientacion),font=(tipografia, 11),size=(25,1)),menuAyuda],
                 [sg.Text('_'  *int(sizeSopa/7))],
