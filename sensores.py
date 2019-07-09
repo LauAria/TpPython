@@ -66,7 +66,8 @@ except FileNotFoundError:
 
 layout = [
             [sg.T('Seleccionar lugar: ')],
-            [sg.InputCombo(list(sensor.keys()), key = 'inputCombo')],
+            [sg.InputCombo(list(sensor.keys()), key = 'inputCombo'),sg.B('Eliminar')],
+            [sg.Input(size=(20,1),do_not_clear=False),sg.B('Agregar')],
             [sg.B('Actualizar temperatura', key = 'actualizarLugar'), sg.B('Mostrar', key = 'mostrarLugar')],
             [sg.T('Lugar: - ', key = 'Tlugar', font = ('Arial', 20),size=(15,1))],
             [sg.T('Temperatura: - ', key = 'Ttemp',size=(15,1)), sg.T('Humedad: - ', key = 'Thum',size=(15,1))]
@@ -79,6 +80,22 @@ while True:
     button, values = window.Read()
     if button is None or button == 'Salir':
         break
+    if (button == 'Eliminar'):
+        try:
+            sensor.pop(values['inputCombo'])
+        except KeyError:
+            sg.Popup('Seleccionar antes el lugar', title = 'Advertencia')
+    if (button == 'Agregar'):
+        datos = {}
+
+        """ DETECTA EL VALOR DEL SENSOR """
+        #temp = Temperatura()
+        #datos = temp.datos_sensor()
+
+        datos['temperatura'] = 50 #ESTE DATO NO SE CARGA A MANO
+        datos['humedad'] = 100 #ESTE DATO NO SE CARGA A MANO
+        datos['fecha'] = str(date.today())
+        sensor[values[0]] = datos #AGREGAR EL VALOR EN EL LUGAR CORRECTO
     if (button == 'actualizarLugar'):
         try:
             datos = {}
