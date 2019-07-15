@@ -49,15 +49,17 @@ try:
 except FileNotFoundError:
     sensor = {}
 
-layout = [
-            [sg.T('Seleccionar lugar a mostrar: ')],
-            [sg.InputCombo(list(sensor.keys()), key = 'inputCombo')],
-            [sg.B('Salir')]
-        ]
+if (len(sensor) < 1):
+    sg.Popup('No se puede mostrar ninguna temperatura por el archivo de datos está vacío.\nAsegúrese de ejecutar antes \"actualizaLugares.py\" y leer los datos de por lo menos un lugar.', title = 'Advertencia')
+else:
+    layout = [
+                [sg.T('Seleccionar lugar a mostrar: ')],
+                [sg.InputCombo(list(sensor.keys()), key = 'inputCombo')],
+                [sg.B('Salir')]
+            ]
 
-window = sg.Window('Temperatura y humedad').Layout(layout)
+    window = sg.Window('Temperatura y humedad').Layout(layout)
 
-try:
     #sonido = Sonido()
     while True:
 
@@ -70,9 +72,10 @@ try:
         #Cuando detecta el sonido le pasa la función mostrar, y le pasa como parámetro la temperatura y humedad
         #del último elemento de la lista del lugar seleccionado
         #sonido.evento_detectado(mostrar, sensor[values['inputCombo']][len(sensor[values['inputCombo']]) - 1]['temperatura'], sensor[values['inputCombo']][len(sensor[values['inputCombo']]) - 1]['humedad'])
-except:
-    sg.Popup('Se produjo un error, puede ser que el archivo de temperaturas esté vacio.\nPor favor intente actualizar las temperaturas nuevamente antes de abrir este programa.', title = 'Advertencia')
 
-#Cierra la ventana y el archivo JSON
-window.Close()
-datosJson.close()
+    #Cierra la ventana y el archivo JSON
+    window.Close()
+try:
+    datosJson.close()
+except NameError:
+    None

@@ -35,14 +35,7 @@ try:
     datosJson = open(archivo, 'r', encoding="utf8") #ABRE EL ARCHIVO EN MODO LECTURA
     sensor = json.load(datosJson) #LEE LOS DATOS Y LOS GUARDA EN SENSOR
 except FileNotFoundError:
-    sensor = {"lugar ejemplo": [
-    {
-        "fecha": "2019-07-15",
-        "temperatura": 1,
-        "humedad": 70
-    }
-    ]
-    }
+    sensor = {}
 
 layout = [
             [sg.T('Seleccionar lugar actual: ')],
@@ -138,7 +131,7 @@ while True:
 
             windowActualizar.Close()
         except KeyError:
-            sg.Popup('El lugar seleccionado ya fue borrado previamente, por favor ingrese uno nuevo o eliga otro.', title = 'Advertencia')
+            sg.Popup('El lugar seleccionado no se pudo encontrar, por favor ingrese uno nuevo o eliga otro.', title = 'Advertencia')
         window.UnHide()
 
     elif (button == 'Seleccionar'):
@@ -149,9 +142,12 @@ while True:
 window.Close()
 #Como no nos funcionó el modo lectura/escritura (r+)
 #decidimos cerrar el archivo de lectura y abrirlo de nuevo para escribirlo
-datosJson.close()
-
-#Vuelve a abrir el Json para guardar los cambios
+try:
+    datosJson.close()
+except NameError: #por si no encontró el archivo
+    None
+    
+#Vuelve a abrir (o crea si no existía) el Json para guardar los cambios
 datosJson = open(archivo, 'w', encoding = "utf8")
 json.dump(sensor, datosJson, indent = 4)
 datosJson.close()
