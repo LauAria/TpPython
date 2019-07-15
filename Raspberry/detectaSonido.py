@@ -57,22 +57,21 @@ layout = [
 
 window = sg.Window('Temperatura y humedad').Layout(layout)
 
-#sonido = Sonido()
-while True:
-    button, values = window.Read(timeout = 0)
+try:
+    #sonido = Sonido()
+    while True:
 
-    if button is None or button == 'Salir':
-        break
+        button, values = window.Read(timeout = 0)
 
-    """ DETECTA SONIDO Y LO MUESTRA EN EL LED CON LA FUNCION MOSTRAR """
-    try:
-        print() #borrar
+        if button is None or button == 'Salir':
+            break
+
+        """ DETECTA SONIDO Y LO MUESTRA EN EL LED CON LA FUNCION MOSTRAR """
         #Cuando detecta el sonido le pasa la función mostrar, y le pasa como parámetro la temperatura y humedad
         #del último elemento de la lista del lugar seleccionado
         #sonido.evento_detectado(mostrar, sensor[values['inputCombo']][len(sensor[values['inputCombo']]) - 1]['temperatura'], sensor[values['inputCombo']][len(sensor[values['inputCombo']]) - 1]['humedad'])
-    except KeyError:
-        sg.Popup('Seleccionar antes el lugar', title = 'Advertencia')
-
+except:
+    sg.Popup('Se produjo un error, puede ser que el archivo de temperaturas esté vacio.\nPor favor intente actualizar las temperaturas nuevamente antes de abrir este programa.', title = 'Advertencia')
 
 #Cierra la ventana y el archivo JSON
 window.Close()

@@ -35,7 +35,14 @@ try:
     datosJson = open(archivo, 'r', encoding="utf8") #ABRE EL ARCHIVO EN MODO LECTURA
     sensor = json.load(datosJson) #LEE LOS DATOS Y LOS GUARDA EN SENSOR
 except FileNotFoundError:
-    sensor = {}
+    sensor = {"lugar ejemplo": [
+    {
+        "fecha": "2019-07-15",
+        "temperatura": 1,
+        "humedad": 70
+    }
+    ]
+    }
 
 layout = [
             [sg.T('Seleccionar lugar actual: ')],
@@ -80,55 +87,58 @@ while True:
     elif (button == 'actualizar'):
         window.Hide()
 
-        #temp = Temperatura() #Descomentar
+        try:
+            #temp = Temperatura() #Descomentar
 
-        #Apenas entra actualiza los datos
-        datos = {} #Borrar
-        #datos = temp.datos_sensor() #Descomentar
-        datos['fecha'] = str(date.today())
-        datos['temperatura'] = 10 #Borrar
-        datos['humedad'] = 50 #Borrar
+            #Apenas entra actualiza los datos
+            datos = {} #Borrar
+            #datos = temp.datos_sensor() #Descomentar
+            datos['fecha'] = str(date.today())
+            datos['temperatura'] = 10 #Borrar
+            datos['humedad'] = 50 #Borrar
 
-        #Lo agrega al json
-        sensor[values['inputCombo']].append(datos)
+            #Lo agrega al json
+            sensor[values['inputCombo']].append(datos)
 
-        #Si tiene mas de 10 registros elimina el registro más viejo
-        if (len(sensor[values['inputCombo']]) > 10):
-            del sensor[values['inputCombo']][0]
+            #Si tiene mas de 10 registros elimina el registro más viejo
+            if (len(sensor[values['inputCombo']]) > 10):
+                del sensor[values['inputCombo']][0]
 
-        #Luego, abre una interfaz y va actualizando los datos cada minuto
-        #interfaz
-        layoutActualizar = crearLayout(values['inputCombo'])
-        windowActualizar = sg.Window('Actualizando datos...').Layout(layoutActualizar)
+            #Luego, abre una interfaz y va actualizando los datos cada minuto
+            #interfaz
+            layoutActualizar = crearLayout(values['inputCombo'])
+            windowActualizar = sg.Window('Actualizando datos...').Layout(layoutActualizar)
 
-        segundo_inicial = time.time() #Inicio contador de tiempo
+            segundo_inicial = time.time() #Inicio contador de tiempo
 
-        while True:
+            while True:
 
-            button2, values2 = windowActualizar.Read(timeout = 0)
+                button2, values2 = windowActualizar.Read(timeout = 0)
 
-            segundo_actual = int(time.time() - segundo_inicial) #Actualizo la diferencia entre el segundo que empezó y el segundo actual
+                segundo_actual = int(time.time() - segundo_inicial) #Actualizo la diferencia entre el segundo que empezó y el segundo actual
 
-            windowActualizar.FindElement('progressbar').UpdateBar(segundo_actual)
-            windowActualizar.FindElement('textoTiempo').Update('Tiempo hasta la proxima actualizacion: ' +  str(60 - segundo_actual))
+                windowActualizar.FindElement('progressbar').UpdateBar(segundo_actual)
+                windowActualizar.FindElement('textoTiempo').Update('Tiempo hasta la proxima actualizacion: ' +  str(60 - segundo_actual))
 
-            if(segundo_actual == 60):
-                #Si pasaron 60 segundos actualiza los datos
-                datos = {} #Borrar
-                #datos = temp.datos_sensor() #Descomentar
-                datos['fecha'] = str(date.today())
-                datos['temperatura'] = 20 #Borrar
-                datos['humedad'] = 70 #Borrar
-                sensor[values['inputCombo']].append(datos)
-                if (len(sensor[values['inputCombo']]) > 10):
-                    del sensor[values['inputCombo']][0]
+                if(segundo_actual == 60):
+                    #Si pasaron 60 segundos actualiza los datos
+                    datos = {} #Borrar
+                    #datos = temp.datos_sensor() #Descomentar
+                    datos['fecha'] = str(date.today())
+                    datos['temperatura'] = 20 #Borrar
+                    datos['humedad'] = 70 #Borrar
+                    sensor[values['inputCombo']].append(datos)
+                    if (len(sensor[values['inputCombo']]) > 10):
+                        del sensor[values['inputCombo']][0]
 
-                segundo_inicial = time.time() #Reinicio contador de tiempo
+                    segundo_inicial = time.time() #Reinicio contador de tiempo
 
-            if button2 is None or button2 == 'Parar':
-                break
+                if button2 is None or button2 == 'Parar':
+                    break
 
-        windowActualizar.Close()
+            windowActualizar.Close()
+        except KeyError:
+            sg.Popup('El lugar seleccionado ya fue borrado previamente, por favor ingrese uno nuevo o eliga otro.', title = 'Advertencia')
         window.UnHide()
 
     elif (button == 'Seleccionar'):
