@@ -73,7 +73,7 @@ while True:
         datos['humedad'] = 0
         datos['fecha'] = ""
 
-        sensor[values['inputAgregar']] = datos #Carga los datos en el diccionario
+        sensor[values['inputAgregar']] = [datos] #Carga los datos en el diccionario
         window.FindElement('inputCombo').Update(values = list(sensor.keys()))
 
 
@@ -88,7 +88,13 @@ while True:
         datos['fecha'] = str(date.today())
         datos['temperatura'] = 10 #Borrar
         datos['humedad'] = 50 #Borrar
-        sensor[values['inputCombo']] = datos
+
+        #Lo agrega al json
+        sensor[values['inputCombo']].append(datos)
+
+        #Si tiene mas de 10 registros elimina el registro más viejo
+        if (len(sensor[values['inputCombo']]) > 10):
+            del sensor[values['inputCombo']][0]
 
         #Luego, abre una interfaz y va actualizando los datos cada minuto
         #interfaz
@@ -113,7 +119,9 @@ while True:
                 datos['fecha'] = str(date.today())
                 datos['temperatura'] = 20 #Borrar
                 datos['humedad'] = 70 #Borrar
-                sensor[values['inputCombo']] = datos
+                sensor[values['inputCombo']].append(datos)
+                if (len(sensor[values['inputCombo']]) > 10):
+                    del sensor[values['inputCombo']][0]
 
                 segundo_inicial = time.time() #Reinicio contador de tiempo
 

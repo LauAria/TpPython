@@ -60,14 +60,16 @@ window = sg.Window('Temperatura y humedad').Layout(layout)
 #sonido = Sonido()
 while True:
     button, values = window.Read(timeout = 0)
-    
+
     if button is None or button == 'Salir':
         break
 
     """ DETECTA SONIDO Y LO MUESTRA EN EL LED CON LA FUNCION MOSTRAR """
     try:
         print() #borrar
-        #sonido.evento_detectado(mostrar, sensor[values['inputCombo']]['temperatura'], sensor[values['inputCombo']]['humedad'])
+        #Cuando detecta el sonido le pasa la función mostrar, y le pasa como parámetro la temperatura y humedad
+        #del último elemento de la lista del lugar seleccionado
+        #sonido.evento_detectado(mostrar, sensor[values['inputCombo']][len(sensor[values['inputCombo']]) - 1]['temperatura'], sensor[values['inputCombo']][len(sensor[values['inputCombo']]) - 1]['humedad'])
     except KeyError:
         sg.Popup('Seleccionar antes el lugar', title = 'Advertencia')
 

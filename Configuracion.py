@@ -389,7 +389,8 @@ while True:
 
             #Guardo el look and feel
             try:
-                temperatura = datosTemp[values['inputlugares']]['temperatura']
+                #Elige la temperatura del últumo valor guardado del input seleccionado
+                temperatura = datosTemp[values['inputlugares']][len(datosTemp[values['inputlugares']]) - 1]['temperatura']
                 if(temperatura <= 15):
                     datos['LookAndFeel'] = 'BlueMono'
                 elif(temperatura <= 25):
