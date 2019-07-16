@@ -5,6 +5,18 @@ from os import getcwd
 from os.path import join
 from datetime import date
 
+""" MODULO PARA EL SENSOR DE TEMPERATURA """
+import Adafruit_DHT
+
+### CLASE SENSOR TEMPERATURA ###
+class Temperatura:
+    def __init__(self, pin=17, sensor=Adafruit_DHT.DHT11):
+        self._sensor = sensor
+        self._data_pin = pin
+    def datos_sensor(self):
+        humedad, temperatura = Adafruit_DHT.read_retry(self._sensor, self._data_pin)
+        return {'temperatura': temperatura, 'humedad': humedad}
+
 def crearLayout (lugar):
     """Crea el layout que muestra mientras actualiza los datos"""
 
@@ -16,19 +28,6 @@ def crearLayout (lugar):
                     [sg.Button('Parar')]
                 ]
     return layoutNuevo
-
-""" MODULO PARA EL SENSOR DE TEMPERATURA """
-#import Adafruit_DHT
-
-### CLASE SENSOR TEMPERATURA ###
-"""class Temperatura:
-    def __init__(self, pin=17, sensor=Adafruit_DHT.DHT11):
-        # Usamos el DHT11 que es compatible con el DHT12
-        self._sensor = sensor
-        self._data_pin = pin
-    def datos_sensor(self):
-        humedad, temperatura = Adafruit_DHT.read_retry(self._sensor, self._data_pin)
-        return {'temperatura': temperatura, 'humedad': humedad}"""
 
 try:
     archivo = join(getcwd(),'Archivos','datosTemperatura.json')#LA RUTA DEL ARCHIVO
@@ -61,9 +60,9 @@ while True:
     if (button == 'Eliminar'):
         try:
             del sensor[values['inputCombo']]
+            window.FindElement('inputCombo').Update(values = list(sensor.keys()))
         except KeyError:
             sg.Popup('Seleccionar antes el lugar a eliminar', title = 'Advertencia')
-        window.FindElement('inputCombo').Update(values = list(sensor.keys()))
 
     elif (button == 'Agregar'):
 
@@ -76,23 +75,18 @@ while True:
         sensor[values['inputAgregar']] = [datos] #Carga los datos en el diccionario
         window.FindElement('inputCombo').Update(values = list(sensor.keys()))
 
-
     elif (button == 'actualizar'):
         window.Hide()
 
         try:
-            #temp = Temperatura() #Descomentar
+            temp = Temperatura() #Descomentar
 
             #Apenas entra actualiza los datos
-            datos = {} #Borrar
-            #datos = temp.datos_sensor() #Descomentar
+            datos = temp.datos_sensor() #Descomentar
             datos['fecha'] = str(date.today())
-            datos['temperatura'] = 10 #Borrar
-            datos['humedad'] = 50 #Borrar
 
             #Lo agrega al json
             sensor[values['inputCombo']].append(datos)
-
             #Si tiene mas de 10 registros elimina el registro más viejo
             if (len(sensor[values['inputCombo']]) > 10):
                 del sensor[values['inputCombo']][0]
@@ -115,11 +109,9 @@ while True:
 
                 if(segundo_actual == 60):
                     #Si pasaron 60 segundos actualiza los datos
-                    datos = {} #Borrar
-                    #datos = temp.datos_sensor() #Descomentar
+                    datos = temp.datos_sensor() #Descomentar
                     datos['fecha'] = str(date.today())
-                    datos['temperatura'] = 20 #Borrar
-                    datos['humedad'] = 70 #Borrar
+
                     sensor[values['inputCombo']].append(datos)
                     if (len(sensor[values['inputCombo']]) > 10):
                         del sensor[values['inputCombo']][0]
@@ -144,9 +136,9 @@ window.Close()
 #decidimos cerrar el archivo de lectura y abrirlo de nuevo para escribirlo
 try:
     datosJson.close()
-except NameError: #por si no encontró el archivo
+except NameError: #por si no encontró el archivo cuando se quiso leer
     None
-    
+
 #Vuelve a abrir (o crea si no existía) el Json para guardar los cambios
 datosJson = open(archivo, 'w', encoding = "utf8")
 json.dump(sensor, datosJson, indent = 4)
