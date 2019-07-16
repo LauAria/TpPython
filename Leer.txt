@@ -1,6 +1,22 @@
+SOPA DE LETRAS
+
 El programa consta de dos archivos principales, Configuracion.py, el cual sirve para setear la configuración de la sopa de letras
 (Elegir palabras, elegir cantidad de palabras, colores, fuente del texto, tipo de ayuda, orientación de la sopa, etc), y de main.py, que lleva a cabo la
 ejecución de la sopa.
 Tiene una carpeta llamada "Archivos", que es en donde se guarda el json con toda la configuración cargada. El json comienza con valores por
 defecto y sin palabras cargadas, y una vez completada la configuración, cargando por lo menos 3 palabras, ya se puede ejecutar la sopa de letras.
 También tiene otra carpeta que se llama "Funciones", en donde guardamos código que sirve para ejecutar los archivos principales.
+
+------------------------------------------------------------------------
+SENSORES EN RASPBERRY
+
+Dividimos la consigna en dos partes, por un lado creamos "actualizaLugares.py", el cual sirve para leer los datos de
+temperatura, humedad y la fecha, y los guarda en el lugar que elijas (Hay una pequeña interfaz que te da la posibilidad
+de agregar nuevos lugares o quitar otros). Una vez seleccionado el lugar se presiona el boton de "Tomar temperatura y
+humedad" y automaticamente se comienzan a guardar los registros tomados (con un máximo de 10 elementos por lugar).
+
+Una vez cargados los datos ya se puede ejecutar el "detectaSonido.py", que es el encargado de mostrar en la led los datos
+de temperatura y humedad cuando escucha un sonido. El lugar a mostrar también se puede seleccionar con una interfaz.
+
+No llegamos a probar nuestra versión final de sensores, debido a lo cual puede que haya algunos errores típicos de programar
+sin probar el programa (nada de gran importancia). 

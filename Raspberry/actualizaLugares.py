@@ -19,7 +19,6 @@ class Temperatura:
 
 def crearLayout (lugar):
     """Crea el layout que muestra mientras actualiza los datos"""
-
     layoutNuevo = [
                     [sg.T('Actualizando datos para: ')],
                     [sg.T(lugar, font = ('Arial', 15))],
