@@ -1,1 +1,38 @@
-{}
+{
+    "oficina 1": [
+        {
+            "fecha": "2019-07-15",
+            "temperatura": 1,
+            "humedad": 70
+        },
+        {
+            "fecha": "2019-07-15",
+            "temperatura": 5,
+            "humedad": 70
+        }
+    ],
+    "oficina 2": [
+        {
+            "temperatura": 10,
+            "humedad": 100,
+            "fecha": "2019-07-05"
+        },
+        {
+            "temperatura": 20,
+            "humedad": 100,
+            "fecha": "2019-07-05"
+        },
+        {
+            "temperatura": 30,
+            "humedad": 100,
+            "fecha": "2019-07-05"
+        }
+    ],
+    "aula 1": [
+        {
+            "temperatura": 100,
+            "humedad": 23,
+            "fecha": "2019-07-05"
+        }
+    ]
+}
