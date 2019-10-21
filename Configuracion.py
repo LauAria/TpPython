@@ -67,7 +67,7 @@ def abrirVentanaTipografia(window):
 
         #Botones para actualizar interfaz
         elif (buttonT == 'cargarMayus'):
-            if (valuesT['inputmayus'] == 'Mayúsculas'):
+            if (valuesT['inputmayus'] == 'Mayusculas'):
                 windowTipografia.FindElement('textoPrueba').Update('Texto de muestra'.upper())
             else:
                 windowTipografia.FindElement('textoPrueba').Update('Texto de muestra'.lower())
@@ -275,7 +275,7 @@ columnaTipografia = [
 
 
 columnaMayus = [
-                    [sg.InputCombo(['Mayúsculas', 'Minúsculas'], default_value = 'Mayúsculas', readonly=True, key = 'inputmayus'),
+                    [sg.InputCombo(['Mayusculas', 'Minusculas'], default_value = 'Mayusculas', readonly=True, key = 'inputmayus'),
                     sg.B('Cargar', key = 'cargarMayus')]
                ]
 
