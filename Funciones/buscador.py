@@ -17,7 +17,7 @@ def segunWiktionary(palabra, tipo):
 	descripcion = ''
 
 	#Lista de titulos de secciones
-	tipoSustantivo = ['Sustantivo femenino', 'Sustantivo masculino', 'Sustantivo propio', 'Forma sustantiva']
+	tipoSustantivo = ['Sustantivo femenino', 'Sustantivo masculino', 'Sustantivo propio', 'Forma sustantiva',  'Forma sustantiva femenina', 'Forma sustantiva masculina']
 
 	tipoAdjetivo = ['Forma adjetiva', 'Adjetivo']
 
